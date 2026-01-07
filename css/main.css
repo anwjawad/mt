@@ -264,15 +264,18 @@ body {
 }
 
 /* Move Indicator based on State Class applied to container */
+/* RTL Logic: Income is Left (End), Expense is Right (Start) */
 .tab-container.income-mode .indicator {
-    left: calc(50% - 4px);
+    left: 4px;
+    /* Left side */
     background: var(--success);
     /* Green for Income */
     box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
 }
 
 .tab-container.expense-mode .indicator {
-    left: 4px;
+    left: calc(50% - 4px);
+    /* Right side */
     background: var(--danger);
     /* Red for Expense */
     box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);

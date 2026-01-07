@@ -64,6 +64,9 @@ class App {
             case 'dashboard':
                 this.renderDashboard(main);
                 break;
+            case 'analytics':
+                this.renderAnalytics(main);
+                break;
             case 'budget':
                 this.renderBudget(main);
                 break;
@@ -83,6 +86,36 @@ class App {
                 this.renderSettings(main);
                 break;
         }
+    }
+
+    renderAnalytics(container) {
+        container.innerHTML = `
+            <div class="glass-card">
+                <div class="flex-between" style="margin-bottom:20px;">
+                    <h2>Analytics Overview</h2>
+                    <select id="chart-filter" class="custom-input" style="width:auto; padding:5px 15px; height:auto;" onchange="app.updateCharts()">
+                         <option value="expense">Expenses</option>
+                         <option value="income">Income</option>
+                    </select>
+                </div>
+                
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:30px;">
+                    <div>
+                        <h4 style="text-align:center; margin-bottom:15px; opacity:0.7;">Category Breakdown</h4>
+                        <div style="height:300px;">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="text-align:center; margin-bottom:15px; opacity:0.7;">Spending Trend</h4>
+                        <div style="height:300px;">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        setTimeout(() => this.initCharts(), 100);
     }
 
     renderDashboard(container) {
