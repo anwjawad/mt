@@ -187,6 +187,58 @@ body {
     transform: scale(0.98);
 }
 
+/* IOS/Material Style Inputs */
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modern-input,
+.modern-select {
+    width: 100%;
+    padding: 25px 15px 10px;
+    /* Top padding for label space */
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    outline: none;
+}
+
+.modern-label {
+    position: absolute;
+    top: 18px;
+    left: 15px;
+    /* RTL aware in body */
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    pointer-events: none;
+}
+
+/* Float Label on Focus or Value */
+.modern-input:focus~.modern-label,
+.modern-input:not(:placeholder-shown)~.modern-label,
+.modern-select:focus~.modern-label,
+.modern-select:valid~.modern-label {
+    top: 5px;
+    font-size: 0.75rem;
+    color: var(--accent);
+}
+
+/* Special case for Select to always show small label if needed, 
+   but standard select shows value always. 
+   We will force label float for Select. */
+.input-group:has(select) .modern-label {
+    top: 5px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
 /* Mobile Bottom Nav (Floating Pill) */
 .mobile-nav {
     position: fixed;

@@ -91,7 +91,7 @@
 
     <!-- Transaction Modal -->
     <div id="add-modal" class="modal-overlay hidden"
-        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:200; display:flex; align-items:center; justify-content:center;">
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:200; align-items:center; justify-content:center;">
         <div class="glass-card modal-card"
             style="width:90%; max-width:400px; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
             <div class="flex-between">
@@ -101,31 +101,35 @@
             </div>
             <br>
 
-            <div style="display:flex; background:rgba(0,0,0,0.3); border-radius:10px; padding:5px; margin-bottom:15px;">
-                <button id="btn-type-expense" class="btn"
-                    style="flex:1; background:var(--danger-grad); margin-right:5px;"
+            <div class="segmented-control">
+                <button id="btn-type-expense" class="segment-btn active-expense"
                     onclick="app.setTransType('expense')">Exp 💸</button>
-                <button id="btn-type-income" class="btn" style="flex:1; background:transparent; opacity:0.6;"
-                    onclick="app.setTransType('income')">Inc 💰</button>
+                <button id="btn-type-income" class="segment-btn" onclick="app.setTransType('income')">Inc 💰</button>
             </div>
 
-            <label style="font-size:0.8rem; opacity:0.8;">Category</label>
-            <select id="trans-category" style="margin-bottom:15px;">
-                <!-- Populated by JS -->
-            </select>
+            <div class="input-group">
+                <select id="trans-category" class="modern-select" required>
+                    <!-- Populated by JS -->
+                </select>
+                <label class="modern-label">Category</label>
+            </div>
 
-            <label style="font-size:0.8rem; opacity:0.8;">Amount</label>
-            <input id="trans-amount" type="number" placeholder="0.00"
-                style="font-size:1.5rem; text-align:center; font-weight:bold;">
+            <div class="input-group">
+                <input id="trans-amount" type="number" class="modern-input" placeholder=" "
+                    style="font-size:1.5rem; text-align:right;">
+                <label class="modern-label">Amount</label>
+            </div>
 
-            <label style="font-size:0.8rem; opacity:0.8;">Note (Optional)</label>
-            <input id="trans-note" type="text" placeholder="Details...">
+            <div class="input-group">
+                <input id="trans-note" type="text" class="modern-input" placeholder=" ">
+                <label class="modern-label">Note (Optional)</label>
+            </div>
 
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="btn" style="background:rgba(255,255,255,0.1); flex:1;"
+            <div style="display:flex; gap:15px; margin-top:25px;">
+                <button class="btn" style="background:rgba(255,255,255,0.05); color:var(--text-muted); flex:1;"
                     onclick="app.closeModal()">Cancel</button>
-                <button class="btn btn-primary" style="flex:2;" onclick="app.saveTransaction()">Save
-                    Transaction</button>
+                <button class="btn btn-primary" style="flex:2; padding:15px; font-size:1.1rem;"
+                    onclick="app.saveTransaction()">Save Transaction</button>
             </div>
         </div>
     </div>

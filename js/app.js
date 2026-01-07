@@ -381,7 +381,9 @@ class App {
     openAddModal() {
         const modal = document.getElementById('add-modal');
         if (modal) {
+            modal.style.display = 'flex'; // Force show
             modal.classList.remove('hidden');
+
             // If we are NOT in a shopping flow, default to basic expense
             if (!this.pendingShoppingId) {
                 this.setTransType('expense');
@@ -395,7 +397,10 @@ class App {
 
     closeModal() {
         const modal = document.getElementById('add-modal');
-        if (modal) modal.classList.add('hidden');
+        if (modal) {
+            modal.style.display = 'none'; // Force hide
+            modal.classList.add('hidden');
+        }
         // Reset shopping state on close/cancel
         this.pendingShoppingId = null;
     }
