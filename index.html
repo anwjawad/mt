@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 
 <body>
@@ -54,6 +55,47 @@
         </main>
     </div>
 
+    <!-- Transaction Modal -->
+    <div id="add-modal" class="modal-overlay hidden"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:200; display:flex; align-items:center; justify-content:center;">
+        <div class="glass-card"
+            style="width:90%; max-width:400px; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <div class="flex-between">
+                <h3>New Transaction</h3>
+                <button onclick="app.closeModal()"
+                    style="background:none; border:none; color:white; font-size:1.5rem;">&times;</button>
+            </div>
+            <br>
+
+            <div style="display:flex; background:rgba(0,0,0,0.3); border-radius:10px; padding:5px; margin-bottom:15px;">
+                <button id="btn-type-expense" class="btn"
+                    style="flex:1; background:var(--danger-grad); margin-right:5px;"
+                    onclick="app.setTransType('expense')">Exp 💸</button>
+                <button id="btn-type-income" class="btn" style="flex:1; background:transparent; opacity:0.6;"
+                    onclick="app.setTransType('income')">Inc 💰</button>
+            </div>
+
+            <label style="font-size:0.8rem; opacity:0.8;">Category</label>
+            <select id="trans-category" style="margin-bottom:15px;">
+                <!-- Populated by JS -->
+            </select>
+
+            <label style="font-size:0.8rem; opacity:0.8;">Amount</label>
+            <input id="trans-amount" type="number" placeholder="0.00"
+                style="font-size:1.5rem; text-align:center; font-weight:bold;">
+
+            <label style="font-size:0.8rem; opacity:0.8;">Note (Optional)</label>
+            <input id="trans-note" type="text" placeholder="Details...">
+
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn" style="background:rgba(255,255,255,0.1); flex:1;"
+                    onclick="app.closeModal()">Cancel</button>
+                <button class="btn btn-primary" style="flex:2;" onclick="app.saveTransaction()">Save
+                    Transaction</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Bottom Navigation -->
     <nav class="nav-bar">
         <button class="nav-item active" onclick="app.navigate('dashboard')">📊</button>
@@ -66,9 +108,15 @@
     </nav>
 
     <!-- Scripts -->
-    <!-- Will be created in next steps -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/app.js" type="module"></script>
-
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('SW Registered'))
+                .catch(console.error);
+        }
+    </script>
 </body>
 
 </html>

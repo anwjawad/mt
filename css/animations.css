@@ -1,0 +1,87 @@
+/* Micro-Animations (Framer Style) */
+
+/* 1. Fade In */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* 2. Slide Up (Standard Entry) */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 3. Pop In (Springy for Modals/Cards) */
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    70% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 4. Stagger (For Lists) */
+.glass-card {
+    animation: slideUp 0.4s ease-out forwards;
+}
+
+/* Stagger delays for list items if we could target them easily, 
+   but for now let's just animate the container or specific elements */
+
+#quick-list>div,
+#full-list>div {
+    animation: slideUp 0.4s ease-out forwards;
+}
+
+#quick-list>div:nth-child(1) {
+    animation-delay: 0.0s;
+}
+
+#quick-list>div:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+#quick-list>div:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+#quick-list>div:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+#quick-list>div:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+/* Buttons Click Effect */
+.btn:active,
+.glass-card:active {
+    transform: scale(0.96);
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Page Transition */
+main {
+    animation: fadeIn 0.3s ease-in-out;
+}

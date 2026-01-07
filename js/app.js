@@ -6,8 +6,29 @@
 import { state } from './state.js';
 import { api } from './api.js';
 
+// Predefined Categories
+const CATEGORIES = {
+    expense: [
+        "مصروف بيت",
+        "مصروف امل",
+        "مصروف جواد",
+        "مصروف ايلين",
+        "سيارة",
+        "دفعة شهرية",
+        "فنكهة",
+        "مصروف فجائي",
+        "اشتراكات"
+    ],
+    income: [
+        "راتب مستشفى",
+        "راتب مركز",
+        "عائد خارجي"
+    ]
+};
+
 class App {
     constructor() {
+        this.currentTransType = 'expense';
         this.init();
     }
 
@@ -33,9 +54,7 @@ class App {
     navigate(viewId) {
         state.currentView = viewId;
 
-        // Update Nav Icons
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        // (Visual update logic left simple for now)
 
         const main = document.getElementById('main-view');
         if (!main) return;
@@ -92,9 +111,134 @@ class App {
                 </button>
             </div>
 
+            <!-- Charts Section -->
+            <div class="glass-card">
+                <div class="flex-between">
+                    <h3>📊 Analytics</h3>
+                    <select id="chart-filter" style="width:auto; padding:5px; font-size:0.8rem; background:rgba(0,0,0,0.3); color:white; border:none;" onchange="app.updateCharts()">
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
+                    </select>
+                </div>
+                <div style="height:200px; margin-top:10px;">
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div style="height:150px; margin-top:20px;">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Calculator -->
+            <div class="glass-card">
+                 <div class="flex-between">
+                    <h3>🧠 Smart Budget</h3>
+                    <button class="btn btn-primary" style="width:auto; padding:5px 12px;" onclick="app.calcBudget(${income})">Calc 50/30/20</button>
+                 </div>
+                 <div id="budget-result" style="margin-top:10px; display:none;"></div>
+            </div>
+
             <h3 style="margin: 20px 0 10px;">Recent Activity</h3>
             <div id="quick-list">
                 ${this.generateTransactionListHTML(state.transactions.slice(0, 5))}
+            </div>
+        `;
+
+        // Render Charts after DOM update
+        setTimeout(() => this.initCharts(), 100);
+    }
+
+    // --- Chart Logic ---
+    initCharts() {
+        const ctxPie = document.getElementById('pieChart');
+        const ctxLine = document.getElementById('lineChart');
+        if (!ctxPie || !ctxLine) return;
+
+        const mode = document.getElementById('chart-filter') ? document.getElementById('chart-filter').value : 'expense';
+        const filtered = state.transactions.filter(t => t.type === mode);
+
+        // 1. Pie Data (By Category)
+        const cats = {};
+        filtered.forEach(t => {
+            const cat = t.category || 'General';
+            cats[cat] = (cats[cat] || 0) + Number(t.amount);
+        });
+
+        // 2. Line Data (By Date - Last 30 Daysish)
+        // Simple bucket by date string
+        const dates = {};
+        const sorted = [...filtered].sort((a, b) => new Date(a.date) - new Date(b.date));
+        sorted.forEach(t => {
+            const d = new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+            dates[d] = (dates[d] || 0) + Number(t.amount);
+        });
+
+        // Destroy old if exists
+        if (this.pieChartInstance) this.pieChartInstance.destroy();
+        if (this.lineChartInstance) this.lineChartInstance.destroy();
+
+        this.pieChartInstance = new Chart(ctxPie, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(cats),
+                datasets: [{
+                    data: Object.values(cats),
+                    backgroundColor: ['#8E2DE2', '#4A00E0', '#00b09b', '#ff5f6d', '#ffc371', '#c3cfe2'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'right', labels: { color: 'white' } } }
+            }
+        });
+
+        this.lineChartInstance = new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: Object.keys(dates),
+                datasets: [{
+                    label: 'Trend',
+                    data: Object.values(dates),
+                    borderColor: '#00b09b',
+                    tension: 0.4,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { ticks: { color: 'rgba(255,255,255,0.5)' }, grid: { display: false } },
+                    y: { ticks: { color: 'rgba(255,255,255,0.5)' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    updateCharts() {
+        this.initCharts();
+    }
+
+    // --- Tools ---
+    calcBudget(income) {
+        if (income <= 0) { alert("Add income first!"); return; }
+        const needs = income * 0.50;
+        const wants = income * 0.30;
+        const savings = income * 0.20;
+
+        const res = document.getElementById('budget-result');
+        res.style.display = 'block';
+        res.innerHTML = `
+            <div class="flex-between" style="border-bottom:1px solid rgba(255,255,255,0.1); padding:5px 0;">
+                <span>🏠 Needs (50%)</span> <strong>₪${needs.toLocaleString()}</strong>
+            </div>
+            <div class="flex-between" style="border-bottom:1px solid rgba(255,255,255,0.1); padding:5px 0;">
+                <span>🎁 Wants (30%)</span> <strong>₪${wants.toLocaleString()}</strong>
+            </div>
+            <div class="flex-between" style="padding:5px 0;">
+                <span>🐷 Savings (20%)</span> <strong>₪${savings.toLocaleString()}</strong>
             </div>
         `;
     }
@@ -165,7 +309,7 @@ class App {
                  ${state.shoppingList.map(item => `
                     <div class="flex-between" style="margin-bottom:10px; padding:12px; background:rgba(255,255,255,0.05); border-radius:10px;">
                         <span style="font-size:1.1rem">${item.name}</span>
-                        <button class="btn btn-primary" style="width:auto; padding: 5px 12px; font-size:0.8rem;" onclick="app.buyItem('${item.id}')">Buy</button>
+                        <button class="btn btn-primary" style="width:auto; padding: 5px 12px; font-size:0.8rem;" onclick="app.buyItem('${item.id}', '${item.name}')">Buy</button>
                     </div>
                  `).join('')}
                  ${state.shoppingList.length === 0 ? '<p style="text-align:center; opacity:0.5; padding:20px;">List is empty</p>' : ''}
@@ -218,73 +362,148 @@ class App {
 
 
     // --- Actions ---
+
     openAddModal() {
-        // Quick Modal Logic without complex HTML overhead for now
-        const typeStart = confirm("Click OK for [Income] 💰\nClick Cancel for [Expense] 💸");
-        const type = typeStart ? 'income' : 'expense';
-
-        const amount = prompt(`Enter ${type.toUpperCase()} Amount (NIS):`);
-        if (!amount) return;
-
-        const category = prompt("Category (e.g. Salary, Food, Bills):", "General");
-        const note = prompt("Note (Optional):", "");
-
-        if (amount) {
-            api.addTransaction({
-                type,
-                amount,
-                category: category || 'General',
-                note: note || '',
-                source: 'me'
-            }).then(() => {
-                alert("Saved Successfully! ✅");
-                this.init(); // Reload data
-            });
+        const modal = document.getElementById('add-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            this.setTransType('expense'); // Default
+            document.getElementById('trans-amount').value = '';
+            document.getElementById('trans-note').value = '';
+            document.getElementById('trans-amount').focus();
         }
     }
 
-    addItem() {
-        const name = prompt("Item Name (e.g. Milk, Bread):");
-        if (name) {
-            api.addShoppingItem(name).then(() => {
-                this.navigate('shopping'); // Re-render
-            });
+    closeModal() {
+        const modal = document.getElementById('add-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    setTransType(type) {
+        this.currentTransType = type;
+        const isExp = type === 'expense';
+
+        // Update Buttons
+        document.getElementById('btn-type-expense').style.opacity = isExp ? '1' : '0.6';
+        document.getElementById('btn-type-expense').style.background = isExp ? 'var(--danger-grad)' : 'transparent';
+
+        document.getElementById('btn-type-income').style.opacity = !isExp ? '1' : '0.6';
+        document.getElementById('btn-type-income').style.background = !isExp ? 'var(--success-grad)' : 'transparent';
+
+        // Populate Categories
+        const select = document.getElementById('trans-category');
+        select.innerHTML = '';
+        CATEGORIES[type].forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            select.appendChild(opt);
+        });
+    }
+
+    saveTransaction() {
+        const amount = document.getElementById('trans-amount').value;
+        const category = document.getElementById('trans-category').value;
+        const note = document.getElementById('trans-note').value;
+
+        if (!amount || Number(amount) <= 0) {
+            alert("Please enter a valid amount");
+            return;
+        }
+
+        this.closeModal();
+
+        // --- ⚡ Optimistic Update (The Illusion) ---
+        // 1. Create temporary object immediately
+        const tempTx = {
+            id: 'temp-' + Date.now(),
+            date: new Date().toISOString(),
+            type: this.currentTransType,
+            amount: amount,
+            category: category,
+            note: note,
+            source: 'me'
+        };
+
+        // 2. Inject into State immediately
+        state.transactions.unshift(tempTx);
+
+        // 3. Update UI immediately
+        this.renderDashboard(document.getElementById('main-view'));
+
+        // 4. Send to Server in Background
+        api.addTransaction({
+            type: this.currentTransType,
+            amount,
+            category: category,
+            note: note,
+            source: 'me'
+        }).then(res => {
+            console.log("Synced to cloud:", res);
+        }).catch(err => {
+            console.error("Sync failed", err);
+        });
+    }
+
+    async addItem() {
+        // Continuous Entry Mode
+        let keepAdding = true;
+
+        while (keepAdding) {
+            const name = prompt("Enter Item Name (or Cancel to stop):");
+
+            if (!name) {
+                keepAdding = false;
+                break;
+            }
+
+            // --- ⚡ Optimistic Update ---
+            const tempItem = {
+                id: 'temp-' + Date.now() + Math.random(),
+                name: name,
+                status: 'pending',
+                date: new Date().toISOString()
+            };
+
+            // 1. Add to local state & Render
+            state.shoppingList.push(tempItem);
+            this.renderShopping(document.getElementById('main-view'));
+
+            // 2. Send to server (Background)
+            api.addShoppingItem(name);
+
+            // Loop continues immediately to next prompt
+            await new Promise(r => setTimeout(r, 100));
         }
     }
 
     buyItem(id) {
-        if (confirm("Confirm purchase? This will remove it from the list.")) {
-            api.buyShoppingItem(id).then(() => {
-                // Optimistically remove from state or reload
-                state.shoppingList = state.shoppingList.filter(i => i.id !== id);
-                this.renderShopping(document.getElementById('main-view'));
-            });
-        }
+        // ⚡ Immediate Feedback
+        state.shoppingList = state.shoppingList.filter(i => i.id !== id);
+        this.renderShopping(document.getElementById('main-view'));
+        api.buyShoppingItem(id);
     }
 
     addGoal() {
-        const name = prompt("Goal Name (e.g. New Laptop):");
+        const name = prompt("Goal Name:");
         const target = prompt("Target Value (NIS):");
         if (name && target) {
-            api.addGoal(name, target).then(() => {
-                this.navigate('goals');
-            });
+            // Optimistic
+            state.goals.push({ name, target, saved: 0 });
+            this.navigate('goals');
+            api.addGoal(name, target);
         }
     }
 
     addBill() {
-        const name = prompt("Bill Name (e.g. Internet):");
+        const name = prompt("Bill Name:");
         const amount = prompt("Amount:");
         const date = prompt("Due Date (YYYY-MM-DD):");
-
         if (name && amount && date) {
-            api.request('addBill', { name, amount, dueDate: date }).then(res => {
-                if (res.ok) {
-                    alert("Bill Added!");
-                    state.bills.push(res.item);
-                    this.renderBills(document.getElementById('main-view'));
-                }
-            });
+            // Optimistic
+            state.bills.push({ name, amount, dueDate: date, isPaid: false });
+            this.renderBills(document.getElementById('main-view'));
+            api.request('addBill', { name, amount, dueDate: date });
         }
     }
 
