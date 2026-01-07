@@ -29,6 +29,7 @@ const CATEGORIES = {
 class App {
     constructor() {
         this.currentTransType = 'expense';
+        this.pendingShoppingId = null; // Track item being bought
         this.init();
     }
 
@@ -143,11 +144,9 @@ class App {
             </div>
         `;
 
-        // Render Charts after DOM update
         setTimeout(() => this.initCharts(), 100);
     }
 
-    // --- Chart Logic ---
     initCharts() {
         const ctxPie = document.getElementById('pieChart');
         const ctxLine = document.getElementById('lineChart');
@@ -156,15 +155,14 @@ class App {
         const mode = document.getElementById('chart-filter') ? document.getElementById('chart-filter').value : 'expense';
         const filtered = state.transactions.filter(t => t.type === mode);
 
-        // 1. Pie Data (By Category)
+        // Pie Data
         const cats = {};
         filtered.forEach(t => {
             const cat = t.category || 'General';
             cats[cat] = (cats[cat] || 0) + Number(t.amount);
         });
 
-        // 2. Line Data (By Date - Last 30 Daysish)
-        // Simple bucket by date string
+        // Line Data
         const dates = {};
         const sorted = [...filtered].sort((a, b) => new Date(a.date) - new Date(b.date));
         sorted.forEach(t => {
@@ -172,7 +170,6 @@ class App {
             dates[d] = (dates[d] || 0) + Number(t.amount);
         });
 
-        // Destroy old if exists
         if (this.pieChartInstance) this.pieChartInstance.destroy();
         if (this.lineChartInstance) this.lineChartInstance.destroy();
 
@@ -217,11 +214,8 @@ class App {
         });
     }
 
-    updateCharts() {
-        this.initCharts();
-    }
+    updateCharts() { this.initCharts(); }
 
-    // --- Tools ---
     calcBudget(income) {
         if (income <= 0) { alert("Add income first!"); return; }
         const needs = income * 0.50;
@@ -232,13 +226,13 @@ class App {
         res.style.display = 'block';
         res.innerHTML = `
             <div class="flex-between" style="border-bottom:1px solid rgba(255,255,255,0.1); padding:5px 0;">
-                <span>🏠 Needs (50%)</span> <strong>₪${needs.toLocaleString()}</strong>
+                <span>🏠 Needs</span> <strong>₪${needs.toLocaleString()}</strong>
             </div>
             <div class="flex-between" style="border-bottom:1px solid rgba(255,255,255,0.1); padding:5px 0;">
-                <span>🎁 Wants (30%)</span> <strong>₪${wants.toLocaleString()}</strong>
+                <span>🎁 Wants</span> <strong>₪${wants.toLocaleString()}</strong>
             </div>
             <div class="flex-between" style="padding:5px 0;">
-                <span>🐷 Savings (20%)</span> <strong>₪${savings.toLocaleString()}</strong>
+                <span>🐷 Savings</span> <strong>₪${savings.toLocaleString()}</strong>
             </div>
         `;
     }
@@ -258,7 +252,6 @@ class App {
 
     generateTransactionListHTML(list) {
         if (list.length === 0) return '<div class="glass-card" style="text-align:center;opacity:0.6;">No transactions yet</div>';
-
         return list.map(t => `
             <div class="glass-card flex-between" style="padding: 15px; margin-bottom: 10px;">
                 <div style="display:flex; align-items:center; gap: 15px;">
@@ -305,7 +298,6 @@ class App {
                     <h2>🛒 Shopping List</h2>
                     <button class="btn btn-primary" style="width:auto; padding: 5px 15px;" onclick="app.addItem()">Add Item</button>
                  </div>
-                 
                  ${state.shoppingList.map(item => `
                     <div class="flex-between" style="margin-bottom:10px; padding:12px; background:rgba(255,255,255,0.05); border-radius:10px;">
                         <span style="font-size:1.1rem">${item.name}</span>
@@ -314,7 +306,6 @@ class App {
                  `).join('')}
                  ${state.shoppingList.length === 0 ? '<p style="text-align:center; opacity:0.5; padding:20px;">List is empty</p>' : ''}
             </div>
-            
             <br>
             <button class="btn" style="background:rgba(255,255,255,0.1)" onclick="app.navigate('dashboard')">Back to Dashboard</button>
         `;
@@ -327,7 +318,6 @@ class App {
                     <h2>🎯 Goals</h2>
                     <button class="btn btn-primary" style="width:auto; padding: 5px 15px;" onclick="app.addGoal()">New Goal</button>
                  </div>
-                 
                  ${state.goals.map(g => `
                     <div style="margin-bottom:20px;">
                         <div class="flex-between" style="margin-bottom:5px;">
@@ -367,9 +357,13 @@ class App {
         const modal = document.getElementById('add-modal');
         if (modal) {
             modal.classList.remove('hidden');
-            this.setTransType('expense'); // Default
+            // If we are NOT in a shopping flow, default to basic expense
+            if (!this.pendingShoppingId) {
+                this.setTransType('expense');
+                document.getElementById('trans-note').value = '';
+                document.getElementById('trans-amount').placeholder = "0.00";
+            }
             document.getElementById('trans-amount').value = '';
-            document.getElementById('trans-note').value = '';
             document.getElementById('trans-amount').focus();
         }
     }
@@ -377,6 +371,8 @@ class App {
     closeModal() {
         const modal = document.getElementById('add-modal');
         if (modal) modal.classList.add('hidden');
+        // Reset shopping state on close/cancel
+        this.pendingShoppingId = null;
     }
 
     setTransType(type) {
@@ -413,8 +409,7 @@ class App {
 
         this.closeModal();
 
-        // --- ⚡ Optimistic Update (The Illusion) ---
-        // 1. Create temporary object immediately
+        // --- ⚡ Optimistic Update ---
         const tempTx = {
             id: 'temp-' + Date.now(),
             date: new Date().toISOString(),
@@ -424,14 +419,22 @@ class App {
             note: note,
             source: 'me'
         };
-
-        // 2. Inject into State immediately
         state.transactions.unshift(tempTx);
 
-        // 3. Update UI immediately
-        this.renderDashboard(document.getElementById('main-view'));
+        // ** shopping Logic **
+        if (this.pendingShoppingId) {
+            // Remove from list
+            state.shoppingList = state.shoppingList.filter(i => i.id !== this.pendingShoppingId);
+            // Send API call to mark as bought
+            api.buyShoppingItem(this.pendingShoppingId);
+            // Reset
+            this.pendingShoppingId = null;
+        }
 
-        // 4. Send to Server in Background
+        // Render Dashboard to show new balance
+        this.navigate('dashboard');
+
+        // Send Transaction to Server
         api.addTransaction({
             type: this.currentTransType,
             amount,
@@ -440,8 +443,6 @@ class App {
             source: 'me'
         }).then(res => {
             console.log("Synced to cloud:", res);
-        }).catch(err => {
-            console.error("Sync failed", err);
         });
     }
 
@@ -465,33 +466,38 @@ class App {
                 date: new Date().toISOString()
             };
 
-            // 1. Add to local state & Render
+            // Add & Render
             state.shoppingList.push(tempItem);
             this.renderShopping(document.getElementById('main-view'));
 
-            // 2. Send to server (Background)
+            // Sync
             api.addShoppingItem(name);
 
-            // Loop continues immediately to next prompt
+            // Re-prompt loop
             await new Promise(r => setTimeout(r, 100));
         }
     }
 
-    buyItem(id) {
-        // ⚡ Immediate Feedback
-        state.shoppingList = state.shoppingList.filter(i => i.id !== id);
-        this.renderShopping(document.getElementById('main-view'));
-        api.buyShoppingItem(id);
+    buyItem(id, name) {
+        // Start Shopping->Expense Flow
+        this.pendingShoppingId = id;
+
+        // Open Modal
+        this.openAddModal();
+
+        // Customize form
+        this.setTransType('expense');
+        document.getElementById('trans-note').value = `شراء: ${name}`;
+        document.getElementById('trans-amount').placeholder = "سعر " + name;
     }
 
     addGoal() {
         const name = prompt("Goal Name:");
         const target = prompt("Target Value (NIS):");
         if (name && target) {
-            // Optimistic
-            state.goals.push({ name, target, saved: 0 });
-            this.navigate('goals');
-            api.addGoal(name, target);
+            api.addGoal(name, target).then(() => {
+                this.navigate('goals');
+            });
         }
     }
 
@@ -500,10 +506,13 @@ class App {
         const amount = prompt("Amount:");
         const date = prompt("Due Date (YYYY-MM-DD):");
         if (name && amount && date) {
-            // Optimistic
-            state.bills.push({ name, amount, dueDate: date, isPaid: false });
-            this.renderBills(document.getElementById('main-view'));
-            api.request('addBill', { name, amount, dueDate: date });
+            api.request('addBill', { name, amount, dueDate: date }).then(res => {
+                if (res.ok) {
+                    alert("Bill Added!");
+                    state.bills.push(res.item);
+                    this.renderBills(document.getElementById('main-view'));
+                }
+            });
         }
     }
 
