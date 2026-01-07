@@ -432,6 +432,9 @@ class App {
             return;
         }
 
+        // Capture ID before it gets wiped by closeModal
+        const buyingId = this.pendingShoppingId;
+
         this.closeModal();
 
         // --- ⚡ Optimistic Update ---
@@ -447,13 +450,12 @@ class App {
         state.transactions.unshift(tempTx);
 
         // ** shopping Logic **
-        if (this.pendingShoppingId) {
+        if (buyingId) {
+            console.log("Processing Buy for item:", buyingId);
             // Remove from list
-            state.shoppingList = state.shoppingList.filter(i => i.id !== this.pendingShoppingId);
+            state.shoppingList = state.shoppingList.filter(i => i.id !== buyingId);
             // Send API call to mark as bought
-            api.buyShoppingItem(this.pendingShoppingId);
-            // Reset
-            this.pendingShoppingId = null;
+            api.buyShoppingItem(buyingId);
         }
 
         // Render Dashboard to show new balance
