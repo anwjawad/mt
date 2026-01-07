@@ -187,56 +187,156 @@ body {
     transform: scale(0.98);
 }
 
-/* IOS/Material Style Inputs */
-.input-group {
+/* --- "Uiverse" Modal Redesign (Dark Adaptation) --- */
+
+.modal-card {
+    width: 90%;
+    max-width: 400px;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    /* Dark Gradient */
+    box-shadow:
+        0px 100px 80px rgba(0, 0, 0, 0.5),
+        0px 40px 30px rgba(0, 0, 0, 0.4),
+        0px 20px 20px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    /* Subtle border */
+    border-radius: 20px;
+    padding: 25px;
     position: relative;
-    margin-bottom: 25px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
 }
 
-.modern-input,
-.modern-select {
-    width: 100%;
-    padding: 25px 15px 10px;
-    /* Top padding for label space */
+.modal-title {
+    font-weight: 800;
+    font-size: 1.5rem;
+    text-align: center;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+}
+
+/* Sliding Tabs */
+.tab-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    position: relative;
+    padding: 4px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.indicator {
+    content: "";
+    width: 50%;
+    height: 38px;
+    background: var(--accent-grad);
+    /* Using App Accent */
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 9;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(142, 45, 226, 0.4);
+}
+
+.tab {
+    width: 50%;
+    height: 38px;
+    position: relative;
+    z-index: 99;
+    background-color: transparent;
+    border: 0;
+    outline: none;
+    flex: none;
+    align-self: stretch;
+    flex-grow: 1;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color 0.3s;
+}
+
+.tab.selected {
+    color: white;
+}
+
+/* Move Indicator based on State Class applied to container */
+.tab-container.income-mode .indicator {
+    left: calc(50% - 4px);
+    background: var(--success);
+    /* Green for Income */
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.tab-container.expense-mode .indicator {
+    left: 4px;
+    background: var(--danger);
+    /* Red for Expense */
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+/* Inputs form */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-wrapper {
+    position: relative;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 0 15px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.input-wrapper:focus-within {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent);
+}
+
+.custom-input {
     background: transparent;
     border: none;
     color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 15px;
     outline: none;
 }
 
-.modern-label {
+.input-label {
     position: absolute;
-    top: 18px;
+    top: 50%;
     left: 15px;
-    /* RTL aware in body */
+    transform: translateY(-50%);
     font-size: 1rem;
     color: var(--text-muted);
-    transition: all 0.2s;
     pointer-events: none;
+    transition: 0.2s;
 }
 
-/* Float Label on Focus or Value */
-.modern-input:focus~.modern-label,
-.modern-input:not(:placeholder-shown)~.modern-label,
-.modern-select:focus~.modern-label,
-.modern-select:valid~.modern-label {
-    top: 5px;
+.custom-input:focus~.input-label,
+.custom-input:not(:placeholder-shown)~.input-label,
+.custom-input:valid~.input-label {
+    top: 12px;
+    transform: none;
     font-size: 0.75rem;
     color: var(--accent);
 }
 
-/* Special case for Select to always show small label if needed, 
-   but standard select shows value always. 
-   We will force label float for Select. */
-.input-group:has(select) .modern-label {
-    top: 5px;
-    font-size: 0.75rem;
-    color: var(--text-muted);
+/* Strict Hidden for Modal */
+.hidden {
+    display: none !important;
 }
 
 /* Mobile Bottom Nav (Floating Pill) */

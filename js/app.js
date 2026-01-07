@@ -407,14 +407,22 @@ class App {
 
     setTransType(type) {
         this.currentTransType = type;
-        const isExp = type === 'expense';
+        const container = document.getElementById('type-tabs');
 
-        // Update Buttons
-        document.getElementById('btn-type-expense').style.opacity = isExp ? '1' : '0.6';
-        document.getElementById('btn-type-expense').style.background = isExp ? 'var(--danger-grad)' : 'transparent';
-
-        document.getElementById('btn-type-income').style.opacity = !isExp ? '1' : '0.6';
-        document.getElementById('btn-type-income').style.background = !isExp ? 'var(--success-grad)' : 'transparent';
+        // Toggle Class for CSS Sliding Indicator
+        if (type === 'expense') {
+            container.classList.add('expense-mode');
+            container.classList.remove('income-mode');
+            // Update Text Color
+            container.children[1].classList.add('selected'); // Expense Tab
+            container.children[2].classList.remove('selected'); // Income Tab
+        } else {
+            container.classList.add('income-mode');
+            container.classList.remove('expense-mode');
+            // Update Text Color
+            container.children[1].classList.remove('selected');
+            container.children[2].classList.add('selected');
+        }
 
         // Populate Categories
         const select = document.getElementById('trans-category');
