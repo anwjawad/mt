@@ -94,53 +94,63 @@ class App {
         const balance = income - expense;
 
         container.innerHTML = `
-            <div class="glass-card" style="text-align:center; padding: 40px 20px;">
-                <h3 style="color:var(--text-muted)">Current Balance</h3>
-                <h1 style="font-size: 3rem; margin: 10px 0;">₪ ${balance.toLocaleString()}</h1>
-                <div class="flex-between" style="max-width: 200px; margin: 0 auto; margin-top: 20px;">
-                    <span class="badge badge-income">▼ ${income.toLocaleString()}</span>
-                    <span class="badge badge-expense">▲ ${expense.toLocaleString()}</span>
+            <div class="glass-card balance-card" style="text-align:center; padding: 40px 20px;">
+                <div>
+                    <h3 style="color:var(--text-muted)">Current Balance</h3>
+                    <h1 style="font-size: 3rem; margin: 10px 0;">₪ ${balance.toLocaleString()}</h1>
+                </div>
+                <div class="flex-between" style="gap:20px;">
+                    <span class="badge badge-income" style="font-size:1rem; padding:10px;">▼ ${income.toLocaleString()}</span>
+                    <span class="badge badge-expense" style="font-size:1rem; padding:10px;">▲ ${expense.toLocaleString()}</span>
                 </div>
             </div>
             
-            <div class="flex-between" style="gap:10px; margin-bottom:20px;">
-                <button class="glass-card" style="flex:1; text-align:center; padding:15px; cursor:pointer;" onclick="app.navigate('shopping')">
-                    <span style="font-size:2rem">🛒</span><br><span style="font-weight:600">Shopping</span>
-                </button>
-                <button class="glass-card" style="flex:1; text-align:center; padding:15px; cursor:pointer;" onclick="app.navigate('goals')">
-                    <span style="font-size:2rem">🎯</span><br><span style="font-weight:600">Goals</span>
-                </button>
-            </div>
-
-            <!-- Charts Section -->
-            <div class="glass-card">
-                <div class="flex-between">
-                    <h3>📊 Analytics</h3>
-                    <select id="chart-filter" style="width:auto; padding:5px; font-size:0.8rem; background:rgba(0,0,0,0.3); color:white; border:none;" onchange="app.updateCharts()">
-                        <option value="expense">Expense</option>
-                        <option value="income">Income</option>
-                    </select>
+            <div id="dashboard-view"> <!-- Grid Container for Desktop -->
+                
+                <!-- Left Column (Desktop) -->
+                <div class="charts-card glass-card">
+                    <div class="flex-between">
+                        <h3>📊 Analytics</h3>
+                        <select id="chart-filter" style="width:auto; padding:5px; font-size:0.8rem; background:rgba(0,0,0,0.3); color:white; border:none;" onchange="app.updateCharts()">
+                            <option value="expense">Expense</option>
+                            <option value="income">Income</option>
+                        </select>
+                    </div>
+                    <div style="height:250px; margin-top:20px;">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    <div style="height:200px; margin-top:30px;">
+                        <canvas id="lineChart"></canvas>
+                    </div>
                 </div>
-                <div style="height:200px; margin-top:10px;">
-                    <canvas id="pieChart"></canvas>
-                </div>
-                <div style="height:150px; margin-top:20px;">
-                    <canvas id="lineChart"></canvas>
-                </div>
-            </div>
 
-            <!-- Calculator -->
-            <div class="glass-card">
-                 <div class="flex-between">
-                    <h3>🧠 Smart Budget</h3>
-                    <button class="btn btn-primary" style="width:auto; padding:5px 12px;" onclick="app.calcBudget(${income})">Calc 50/30/20</button>
-                 </div>
-                 <div id="budget-result" style="margin-top:10px; display:none;"></div>
-            </div>
+                <!-- Right Column (Desktop) -->
+                <div class="shortcuts-container">
+                    <div class="flex-between" style="gap:10px;">
+                        <button class="glass-card" style="flex:1; text-align:center; padding:20px; cursor:pointer; margin:0;" onclick="app.navigate('shopping')">
+                            <span style="font-size:2rem">🛒</span><br><span style="font-weight:600">Shopping</span>
+                        </button>
+                        <button class="glass-card" style="flex:1; text-align:center; padding:20px; cursor:pointer; margin:0;" onclick="app.navigate('goals')">
+                            <span style="font-size:2rem">🎯</span><br><span style="font-weight:600">Goals</span>
+                        </button>
+                    </div>
 
-            <h3 style="margin: 20px 0 10px;">Recent Activity</h3>
-            <div id="quick-list">
-                ${this.generateTransactionListHTML(state.transactions.slice(0, 5))}
+                    <!-- Calculator -->
+                    <div class="glass-card" style="margin:0;">
+                         <div class="flex-between">
+                            <h3>🧠 Smart Budget</h3>
+                            <button class="btn btn-primary" style="width:auto; padding:5px 12px;" onclick="app.calcBudget(${income})">Calc</button>
+                         </div>
+                         <div id="budget-result" style="margin-top:10px; display:none;"></div>
+                    </div>
+
+                    <div style="margin-top:10px;">
+                        <h3 style="margin-bottom:10px;">Recent Activity</h3>
+                        <div id="quick-list">
+                            ${this.generateTransactionListHTML(state.transactions.slice(0, 5))}
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
 
@@ -257,7 +267,7 @@ class App {
                 <div style="display:flex; align-items:center; gap: 15px;">
                     <div style="font-size:1.5rem;">${t.type === 'income' ? '💰' : '💸'}</div>
                     <div>
-                        <div style="font-weight:600;">${t.category || (t.type === 'income' ? 'Income' : 'Expense')}</div>
+                        <div style="font-weight:600;">${t.category} <span style="font-size:0.8rem; font-weight:400; opacity:0.7;">${t.note ? ' • ' + t.note : ''}</span></div>
                         <div style="font-size:0.8rem; color:var(--text-muted)">${new Date(t.date).toLocaleDateString("en-GB")}</div>
                     </div>
                 </div>
