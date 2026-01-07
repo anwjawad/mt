@@ -232,17 +232,26 @@ class App {
         const wants = income * 0.30;
         const savings = income * 0.20;
 
-        const res = document.getElementById('budget-result');
-        res.style.display = 'block';
+        const res = document.getElementById('budget-calc-area') || document.getElementById('budget-result');
+        if (!res) return;
+
         res.innerHTML = `
-            <div class="flex-between" style="border-bottom:1px solid rgba(255,255,255,0.1); padding:5px 0;">
-                <span>🏠 Needs</span> <strong>₪${needs.toLocaleString()}</strong>
-            </div>
-            <div class="flex-between" style="border-bottom:1px solid rgba(255,255,255,0.1); padding:5px 0;">
-                <span>🎁 Wants</span> <strong>₪${wants.toLocaleString()}</strong>
-            </div>
-            <div class="flex-between" style="padding:5px 0;">
-                <span>🐷 Savings</span> <strong>₪${savings.toLocaleString()}</strong>
+            <div style="margin-top:15px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center;">
+                <div style="padding:15px; background:rgba(255,255,255,0.05); border-radius:10px;">
+                    <div style="font-size:1.5rem">🏠</div>
+                    <div>Needs (50%)</div>
+                    <strong style="font-size:1.2rem; color:#60a5fa">₪${needs.toLocaleString()}</strong>
+                </div>
+                <div style="padding:15px; background:rgba(255,255,255,0.05); border-radius:10px;">
+                    <div style="font-size:1.5rem">🎁</div>
+                    <div>Wants (30%)</div>
+                    <strong style="font-size:1.2rem; color:#c084fc">₪${wants.toLocaleString()}</strong>
+                </div>
+                <div style="padding:15px; background:rgba(255,255,255,0.05); border-radius:10px;">
+                    <div style="font-size:1.5rem">🐷</div>
+                    <div>Savings (20%)</div>
+                    <strong style="font-size:1.2rem; color:#4ade80">₪${savings.toLocaleString()}</strong>
+                </div>
             </div>
         `;
     }

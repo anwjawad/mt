@@ -1,16 +1,21 @@
+/* AJ+ Modern Web App Design System */
+
 :root {
-    --primary-hue: 250;
     --bg-dark: #0f172a;
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --sidebar-bg: rgba(15, 23, 42, 0.6);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    --active-bg: rgba(142, 45, 226, 0.15);
+
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
-    --accent-primary: #8E2DE2;
+
+    --accent: #8E2DE2;
     --accent-grad: linear-gradient(135deg, #8E2DE2, #4A00E0);
-    --danger: #ef4444;
-    --danger-grad: linear-gradient(135deg, #ff5f6d, #ffc371);
     --success: #10b981;
-    --success-grad: linear-gradient(135deg, #00b09b, #96c93d);
+    --danger: #ef4444;
+
     --font-head: 'Outfit', sans-serif;
     --font-body: 'Almarai', sans-serif;
 }
@@ -19,6 +24,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    outline: none;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -26,82 +32,208 @@ body {
     background: var(--bg-dark);
     color: var(--text-main);
     font-family: var(--font-body);
-    overflow-x: hidden;
+    direction: rtl;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* Background Blobs */
-.blob {
+/* --- Background Layer --- */
+.bg-mesh {
     position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
+    inset: 0;
     z-index: -1;
-    opacity: 0.4;
+    pointer-events: none;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.3;
 }
 
 .blob-1 {
     top: -10%;
-    left: -10%;
-    width: 500px;
-    height: 500px;
+    right: -10%;
+    width: 50vw;
+    height: 50vw;
     background: #4A00E0;
 }
 
 .blob-2 {
     bottom: -10%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
+    left: -10%;
+    width: 40vw;
+    height: 40vw;
     background: #8E2DE2;
 }
 
-/* Desktop Grid Layout */
-.app-container {
-    max-width: 1400px;
-    margin: 0 auto;
+/* --- Layout Grid --- */
+.app-layout {
+    display: flex;
     min-height: 100vh;
-    display: grid;
-    /* Mobile First: Single Column */
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto;
-    /* Content, Nav */
+}
+
+/* Sidebar (Desktop) */
+.sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    border-left: 1px solid var(--glass-border);
+    /* RTL layout */
+    backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    gap: 30px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 50;
+    display: none;
+    /* Mobile Default */
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    padding-bottom: 100px;
+    /* Space for mobile nav */
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* --- Components --- */
+
+/* Navigation Buttons */
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-head);
+    font-size: 1rem;
+    padding: 12px 15px;
+    width: 100%;
+    text-align: right;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-btn .icon {
+    font-size: 1.2rem;
+    min-width: 24px;
+    text-align: center;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+}
+
+.nav-btn.active {
+    background: var(--active-bg);
+    color: #c4b5fd;
+    font-weight: 600;
+    border-left: 3px solid var(--accent);
 }
 
 /* Glass Card */
 .glass-card {
     background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
-    padding: 20px;
+    padding: 25px;
     margin-bottom: 20px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+    box-shadow: var(--glass-shadow);
 }
 
+/* Buttons */
 .btn {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-family: var(--font-head);
-    font-weight: 600;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: 600;
     width: 100%;
+    transition: 0.2s;
 }
 
 .btn-primary {
     background: var(--accent-grad);
-    border: none;
+    color: white;
+    box-shadow: 0 4px 15px rgba(142, 45, 226, 0.3);
 }
 
-.btn-danger {
-    background: rgba(239, 68, 68, 0.2);
-    color: var(--danger);
-    border-color: rgba(239, 68, 68, 0.3);
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* Mobile Bottom Nav */
+.mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 100;
+    padding-bottom: 5px;
+    /* iOS Safe */
+}
+
+.mobile-item {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    padding: 10px;
+    transition: 0.2s;
+}
+
+.mobile-item.active {
+    color: var(--accent);
+    transform: translateY(-5px);
+}
+
+.mobile-add-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: var(--accent-grad);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    box-shadow: 0 5px 20px rgba(142, 45, 226, 0.5);
+    transform: translateY(-20px);
+    cursor: pointer;
+}
+
+/* Modal */
+.hidden {
+    display: none !important;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 15px;
 }
 
 /* Utilities */
@@ -115,7 +247,6 @@ body {
     padding: 4px 8px;
     border-radius: 6px;
     font-size: 0.75rem;
-    font-weight: bold;
 }
 
 .badge-income {
@@ -128,173 +259,34 @@ body {
     color: var(--danger);
 }
 
-.hidden {
-    display: none !important;
-}
+/* --- RESPONISVE BREAKPOINTS --- */
 
-/* Navigation */
-.nav-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(15, 23, 42, 0.9);
-    backdrop-filter: blur(20px);
-    display: flex;
-    justify-content: space-around;
-    padding: 15px 0 25px;
-    /* iOS safe area */
-    border-top: 1px solid var(--glass-border);
-    z-index: 100;
-}
-
-.nav-item {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.nav-item.active {
-    color: var(--text-main);
-    transform: scale(1.1);
-    position: relative;
-}
-
-.nav-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 5px;
-    height: 5px;
-    background: var(--accent-primary);
-    border-radius: 50%;
-}
-
-.add-btn-wrapper {
-    position: relative;
-    top: -25px;
-}
-
-.add-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--accent-grad);
-    border: none;
-    font-size: 2rem;
-    color: white;
-    box-shadow: 0 10px 25px rgba(142, 45, 226, 0.4);
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.add-btn:active {
-    transform: scale(0.9);
-}
-
-/* --- RESPONSIVE DESKTOP OVERRIDES --- */
+/* Desktop / Tablet Grid */
 @media (min-width: 800px) {
-    .app-container {
-        /* Sidebar Layout */
-        grid-template-columns: 250px 1fr;
-        /* Sidebar, Content */
-        grid-template-rows: 1fr;
-        padding: 40px;
-        gap: 40px;
-        max-width: 1600px;
-        height: 100vh;
-        overflow: hidden;
-        /* Main scroll handles itself */
-    }
 
-    /* Move Nav to Sidebar */
-    .nav-bar {
-        position: static;
-        flex-direction: column;
-        justify-content: flex-start;
-        gap: 20px;
-        padding: 40px 20px;
-        height: auto;
-        border-right: 1px solid var(--glass-border);
-        border-top: none;
-        background: var(--glass-bg);
-        border-radius: 20px;
-        backdrop-filter: blur(20px);
-    }
-
-    .nav-item {
-        font-size: 1.2rem;
+    /* Show Sidebar */
+    .sidebar {
         display: flex;
-        align-items: center;
-        gap: 15px;
-        width: 100%;
-        padding: 10px;
-        border-radius: 10px;
     }
 
-    .nav-item:hover {
-        background: rgba(255, 255, 255, 0.05);
+    /* Hide Mobile Nav */
+    .mobile-nav {
+        display: none;
     }
 
-    /* Add Labels to Nav Items for Desktop */
-    .nav-item span {
-        display: inline-block;
-        font-size: 1rem;
-        font-family: var(--font-head);
+    /* Adjust Main Content to sit left of sidebar (RTL) or right (LTR) */
+    /* Since body is RTL, Sidebar is on RIGHT. Main content needs margin-right. */
+    .main-content {
+        margin-right: 260px;
+        /* Sidebar Width */
+        margin-left: 0;
+        padding-bottom: 40px;
     }
 
-    .add-btn-wrapper {
-        position: static;
-        order: -1;
-        /* Put ADD button at top */
-        margin-bottom: 40px;
-        display: flex;
-        justify-content: center;
-    }
-
-    /* Main Content Area */
-    main {
-        overflow-y: auto;
-        padding-right: 10px;
-        /* Scrollbar space */
-        height: 100%;
-    }
-
-    /* Dashboard Specific Grid */
-    #dashboard-view {
+    /* Dashboard Grid */
+    .dashboard-grid {
         display: grid;
         grid-template-columns: 2fr 1fr;
-        /* Charts Main, Shortcuts Side */
-        grid-template-rows: auto auto;
-        gap: 20px;
+        gap: 25px;
     }
-
-    /* Make Balance Full Width */
-    .balance-card {
-        grid-column: 1 / -1;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-    }
-
-    /* Charts take left block */
-    .charts-card {
-        grid-column: 1 / 2;
-        grid-row: 2 / 4;
-        height: 100%;
-    }
-
-    /* Shortcuts and Activity on Right */
-    .shortcuts-container {
-        grid-column: 2 / 3;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
 }
