@@ -56,6 +56,10 @@ function doGet(e) {
         appendRow(ss, 'Bills', bill);
         result = { ok: true, item: bill };
         break;
+      case 'payBill':
+        updateCell(ss, 'Bills', 'id', params.id, 'isPaid', true);
+        result = { ok: true };
+        break;
 
       // --- SHOPPING ---
       case 'getShoppingList':
@@ -71,9 +75,7 @@ function doGet(e) {
         appendRow(ss, 'Shopping', item);
         result = { ok: true, item: item };
         break;
-      case 'buyShoppingItem': // Bulk buy or single buy
-        // Implementation: Find item, change status to purchased, add transaction logic if needed
-        // For MVP: Just update status
+      case 'buyShoppingItem': 
         updateCell(ss, 'Shopping', 'id', params.id, 'status', 'purchased');
         result = { ok: true };
         break;
@@ -92,6 +94,22 @@ function doGet(e) {
         appendRow(ss, 'Goals', goal);
         result = { ok: true, item: goal };
         break;
+      case 'depositGoal':
+         // This is a bit more complex (needs to read old value), but for MVP we can just set it
+         // Or client sends the new total? 
+         // Safer: Client Logic calculates total for now, we just update.
+         // Let's implement addToCell helper for robustness later, but 'updateCell' for now.
+         
+         // 1. Get current saved from Sheet (Correct Approach)
+         const goalRow = findRow(ss, 'Goals', 'id', params.id);
+         if(goalRow) {
+             const newSaved = Number(goalRow.saved || 0) + Number(params.amount);
+             updateCell(ss, 'Goals', 'id', params.id, 'saved', newSaved);
+             result = { ok: true, newSaved: newSaved };
+         } else {
+             result = { ok: false, error: 'Goal Not Found' };
+         }
+         break;
 
       default:
         result = { ok: false, error: 'Unknown Action: ' + action };
@@ -149,6 +167,25 @@ function updateCell(ss, sheetName, idColName, idVal, targetColName, newVal) {
     if(String(data[i][idIdx]) === String(idVal)) {
       sheet.getRange(i+1, targetIdx+1).setValue(newVal);
       return;
+    }
+  }
+}
+
+function findRow(ss, sheetName, idColName, idVal) {
+  const sheet = ss.getSheetByName(sheetName);
+  if(!sheet) return null;
+  
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const idIdx = headers.indexOf(idColName);
+  
+  if(idIdx === -1) return null;
+  
+  for(let i=1; i<data.length; i++) {
+    if(String(data[i][idIdx]) === String(idVal)) {
+      let obj = {};
+      headers.forEach((h, idx) => obj[h] = data[i][idx]);
+      return obj;
     }
   }
 }

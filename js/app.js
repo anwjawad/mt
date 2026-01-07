@@ -330,7 +330,7 @@ class App {
         container.innerHTML = `
             <div class="glass-card">
                  <div class="flex-between" style="margin-bottom:15px;">
-                    <h2>📅 Bills</h2>
+                    <h2>📅 Smart Bills</h2>
                     <button class="btn btn-primary" style="width:auto; padding: 5px 15px;" onclick="app.addBill()">New Bill</button>
                  </div>
                  ${state.bills.length ? state.bills.map(b => `
@@ -339,13 +339,46 @@ class App {
                             <strong>${b.name}</strong>
                             <strong style="color:var(--text-main)">₪${b.amount}</strong>
                         </div>
-                        <div class="flex-between" style="margin-top:5px;">
+                        <div class="flex-between" style="margin-top:10px;">
                              <small style="color:var(--text-muted)">Due: ${new Date(b.dueDate).toLocaleDateString()}</small>
-                             <small class="badge ${b.isPaid ? 'badge-income' : 'badge-expense'}">${b.isPaid ? 'Paid' : 'Unpaid'}</small>
+                             ${b.isPaid ?
+                '<span class="badge badge-income">PAID ✅</span>' :
+                `<button class="btn" style="width:auto; padding:5px 10px; font-size:0.8rem; background:rgba(239, 68, 68, 0.2); color:var(--danger);" onclick="app.payBill('${b.id}', '${b.name}', '${b.amount}')">Pay Now 💸</button>`
+            }
                         </div>
                     </div>
                  `).join('') : '<p style="opacity:0.6; text-align:center;">No bills found</p>'}
             </div>
+        `;
+    }
+
+    renderGoals(container) {
+        container.innerHTML = `
+            <div class="glass-card">
+                 <div class="flex-between" style="margin-bottom:15px;">
+                    <h2>🎯 Smart Goals</h2>
+                    <button class="btn btn-primary" style="width:auto; padding: 5px 15px;" onclick="app.addGoal()">New Goal</button>
+                 </div>
+                 ${state.goals.map(g => `
+                    <div style="margin-bottom:25px; background:rgba(255,255,255,0.03); padding:15px; border-radius:12px;">
+                        <div class="flex-between" style="margin-bottom:10px;">
+                            <strong>${g.name}</strong>
+                            <small>${Number(g.saved || 0).toLocaleString()} / ${Number(g.target).toLocaleString()}</small>
+                        </div>
+                        <div style="width:100%; height:10px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:15px;">
+                            <div style="width:${Math.min(((g.saved || 0) / g.target) * 100, 100)}%; height:100%; background:var(--accent-primary); transition:width 0.5s;"></div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn" style="flex:1; background:rgba(16, 185, 129, 0.1); color:var(--success); font-size:0.9rem;" onclick="app.depositGoal('${g.id}', '${g.name}')">
+                                + Deposit 💰
+                            </button>
+                        </div>
+                    </div>
+                 `).join('')}
+                 ${state.goals.length === 0 ? '<p style="text-align:center; opacity:0.5; padding:20px;">No goals yet</p>' : ''}
+            </div>
+             <br>
+            <button class="btn" style="background:rgba(255,255,255,0.1)" onclick="app.navigate('dashboard')">Back to Dashboard</button>
         `;
     }
 
@@ -373,17 +406,22 @@ class App {
         container.innerHTML = `
             <div class="glass-card">
                  <div class="flex-between" style="margin-bottom:15px;">
-                    <h2>🎯 Goals</h2>
+                    <h2>🎯 Smart Goals</h2>
                     <button class="btn btn-primary" style="width:auto; padding: 5px 15px;" onclick="app.addGoal()">New Goal</button>
                  </div>
                  ${state.goals.map(g => `
-                    <div style="margin-bottom:20px;">
-                        <div class="flex-between" style="margin-bottom:5px;">
+                    <div style="margin-bottom:25px; background:rgba(255,255,255,0.03); padding:15px; border-radius:12px;">
+                        <div class="flex-between" style="margin-bottom:10px;">
                             <strong>${g.name}</strong>
-                            <small>${g.saved || 0} / ${g.target}</small>
+                            <small>${Number(g.saved || 0).toLocaleString()} / ${Number(g.target).toLocaleString()}</small>
                         </div>
-                        <div style="width:100%; height:10px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden;">
-                            <div style="width:${Math.min(((g.saved || 0) / g.target) * 100, 100)}%; height:100%; background:var(--accent-primary);"></div>
+                        <div style="width:100%; height:10px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:15px;">
+                            <div style="width:${Math.min(((g.saved || 0) / g.target) * 100, 100)}%; height:100%; background:var(--accent-primary); transition:width 0.5s;"></div>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn" style="flex:1; background:rgba(16, 185, 129, 0.1); color:var(--success); font-size:0.9rem;" onclick="app.depositGoal('${g.id}', '${g.name}')">
+                                + Deposit 💰
+                            </button>
                         </div>
                     </div>
                  `).join('')}
@@ -587,6 +625,70 @@ class App {
                 }
             });
         }
+    }
+
+    // --- Smart Logic ---
+
+    payBill(id, name, amount) {
+        if (!confirm(`Pay ₪${amount} for ${name}? This will be recorded as an expense.`)) return;
+
+        // 1. Optimistic Update (Bill)
+        const bill = state.bills.find(b => b.id === id);
+        if (bill) bill.isPaid = true;
+        this.renderBills(document.getElementById('main-view'));
+
+        // 2. Add Expense Transaction
+        state.transactions.unshift({
+            id: 'temp-' + Date.now(),
+            date: new Date().toISOString(),
+            type: 'expense',
+            amount: amount,
+            category: 'Bills',
+            note: `Bill Payment: ${name}`,
+            source: 'me'
+        });
+
+        // 3. Sync
+        api.request('payBill', { id: id });
+        api.addTransaction({
+            type: 'expense',
+            amount: amount,
+            category: 'Bills',
+            note: `Bill Payment: ${name}`
+        });
+
+        // Flash Success
+        alert(`Paid ₪${amount} successfully!`);
+    }
+
+    depositGoal(id, name) {
+        const amount = prompt(`How much to deposit into '${name}'?`);
+        if (!amount || Number(amount) <= 0) return;
+
+        // 1. Optimistic Update (Goal)
+        const goal = state.goals.find(g => g.id === id);
+        if (goal) goal.saved = (Number(goal.saved) || 0) + Number(amount);
+        this.renderGoals(document.getElementById('main-view'));
+
+        // 2. Add Expense Transaction (Money left your wallet -> Goal)
+        state.transactions.unshift({
+            id: 'temp-' + Date.now(),
+            date: new Date().toISOString(),
+            type: 'expense',
+            amount: amount,
+            category: 'Savings',
+            note: `Deposit to Goal: ${name}`,
+            source: 'me'
+        });
+
+        // 3. Sync
+        api.request('depositGoal', { id: id, amount: amount });
+        api.addTransaction({
+            type: 'expense',
+            amount: amount,
+            category: 'Savings',
+            note: `Deposit to Goal: ${name}`
+        });
     }
 
     showError(msg) {
