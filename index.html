@@ -22,38 +22,69 @@
 </head>
 
 <body>
-
     <!-- Background -->
     <div class="bg-mesh">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
     </div>
 
-    <!-- App Container -->
-    <div class="app-container">
-
-        <!-- Header -->
-        <header class="flex-between" style="margin-bottom: 30px;">
-            <div>
-                <h1 class="text-gradient">AJ+</h1>
-                <small style="color:var(--text-muted)">Premium Finance</small>
+    <div class="app-layout">
+        <!-- Desktop Sidebar -->
+        <aside class="sidebar">
+            <div style="margin-bottom: 20px;">
+                <h1 style="font-size: 2rem;">AJ+</h1>
+                <span class="badge badge-income">Premium</span>
             </div>
-            <div id="user-avatar"
-                style="width:40px;height:40px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                👤
-            </div>
-        </header>
 
-        <!-- Current View Container -->
-        <main id="main-view">
-            <!-- Dynamic Content Injected Here -->
-            <div class="glass-card">
-                <h2>جاري التحميل...</h2>
-                <p>يتم الاتصال بقاعدة البيانات</p>
+            <nav style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                <button class="nav-btn active" onclick="app.navigate('dashboard')">
+                    <span class="icon">📊</span> Dashboard
+                </button>
+                <button class="nav-btn" onclick="app.navigate('analytics')">
+                    <span class="icon">📈</span> Analytics
+                </button>
+                <button class="nav-btn" onclick="app.navigate('transactions')">
+                    <span class="icon">💸</span> History
+                </button>
+                <button class="nav-btn" onclick="app.navigate('bills')">
+                    <span class="icon">📅</span> Bills
+                </button>
+                <button class="nav-btn" onclick="app.navigate('shopping')">
+                    <span class="icon">🛒</span> Shopping
+                </button>
+                <button class="nav-btn" onclick="app.navigate('goals')">
+                    <span class="icon">🎯</span> Goals
+                </button>
+                <button class="nav-btn" onclick="app.navigate('settings')">
+                    <span class="icon">⚙️</span> Settings
+                </button>
+            </nav>
+
+            <button class="btn btn-primary" onclick="app.openAddModal()" style="margin-top: auto;">
+                + New Transaction
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main id="main-view" class="main-content">
+            <!-- Dynamic Content Load Here -->
+            <div class="glass-card" style="text-align: center; padding: 50px;">
+                <div class="spinner"></div>
+                <h2>Loading AJ+...</h2>
             </div>
         </main>
     </div>
+
+    <!-- Mobile Bottom Navigation (Visible only on mobile) -->
+    <nav class="mobile-nav">
+        <button class="mobile-item active" onclick="app.navigate('dashboard')">📊</button>
+        <button class="mobile-item" onclick="app.navigate('transactions')">💸</button>
+        <div style="position: relative; width: 50px;">
+            <button class="mobile-add-btn" onclick="app.openAddModal()">+</button>
+        </div>
+        <button class="mobile-item" onclick="app.navigate('shopping')">🛒</button>
+        <button class="mobile-item" onclick="app.navigate('settings')">⚙️</button>
+    </nav>
 
     <!-- Transaction Modal -->
     <div id="add-modal" class="modal-overlay hidden"
@@ -95,17 +126,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Bottom Navigation -->
-    <nav class="nav-bar">
-        <button class="nav-item active" onclick="app.navigate('dashboard')">📊</button>
-        <button class="nav-item" onclick="app.navigate('transactions')">💸</button>
-        <button class="nav-item"
-            style="font-size: 2rem; color: #fff; background: var(--accent-primary); border-radius: 50%; width: 60px; height: 60px; margin-top: -30px; box-shadow: 0 5px 20px rgba(142,45,226,0.5);"
-            onclick="app.openAddModal()">+</button>
-        <button class="nav-item" onclick="app.navigate('bills')">📅</button>
-        <button class="nav-item" onclick="app.navigate('settings')">⚙️</button>
-    </nav>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
