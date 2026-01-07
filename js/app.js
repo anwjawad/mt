@@ -64,6 +64,9 @@ class App {
             case 'dashboard':
                 this.renderDashboard(main);
                 break;
+            case 'budget':
+                this.renderBudget(main);
+                break;
             case 'transactions':
                 this.renderTransactions(main);
                 break;
@@ -82,8 +85,6 @@ class App {
         }
     }
 
-    // --- Rendering ---
-
     renderDashboard(container) {
         // Calculate Totals
         let income = 0, expense = 0;
@@ -94,67 +95,72 @@ class App {
         const balance = income - expense;
 
         container.innerHTML = `
-            <div class="glass-card balance-card" style="text-align:center; padding: 40px 20px;">
-                <div>
-                    <h3 style="color:var(--text-muted)">Current Balance</h3>
-                    <h1 style="font-size: 3rem; margin: 10px 0;">₪ ${balance.toLocaleString()}</h1>
-                </div>
-                <div class="flex-between" style="gap:20px;">
-                    <span class="badge badge-income" style="font-size:1rem; padding:10px;">▼ ${income.toLocaleString()}</span>
-                    <span class="badge badge-expense" style="font-size:1rem; padding:10px;">▲ ${expense.toLocaleString()}</span>
-                </div>
-            </div>
-            
-            <div id="dashboard-view"> <!-- Grid Container for Desktop -->
+            <div class="dashboard-grid">
                 
-                <!-- Left Column (Desktop) -->
-                <div class="charts-card glass-card">
-                    <div class="flex-between">
-                        <h3>📊 Analytics</h3>
-                        <select id="chart-filter" style="width:auto; padding:5px; font-size:0.8rem; background:rgba(0,0,0,0.3); color:white; border:none;" onchange="app.updateCharts()">
-                            <option value="expense">Expense</option>
-                            <option value="income">Income</option>
-                        </select>
-                    </div>
-                    <div style="height:250px; margin-top:20px;">
-                        <canvas id="pieChart"></canvas>
-                    </div>
-                    <div style="height:200px; margin-top:30px;">
-                        <canvas id="lineChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Right Column (Desktop) -->
-                <div class="shortcuts-container">
-                    <div class="flex-between" style="gap:10px;">
-                        <button class="glass-card" style="flex:1; text-align:center; padding:20px; cursor:pointer; margin:0;" onclick="app.navigate('shopping')">
-                            <span style="font-size:2rem">🛒</span><br><span style="font-weight:600">Shopping</span>
-                        </button>
-                        <button class="glass-card" style="flex:1; text-align:center; padding:20px; cursor:pointer; margin:0;" onclick="app.navigate('goals')">
-                            <span style="font-size:2rem">🎯</span><br><span style="font-weight:600">Goals</span>
-                        </button>
-                    </div>
-
-                    <!-- Calculator -->
-                    <div class="glass-card" style="margin:0;">
-                         <div class="flex-between">
-                            <h3>🧠 Smart Budget</h3>
-                            <button class="btn btn-primary" style="width:auto; padding:5px 12px;" onclick="app.calcBudget(${income})">Calc</button>
-                         </div>
-                         <div id="budget-result" style="margin-top:10px; display:none;"></div>
-                    </div>
-
-                    <div style="margin-top:10px;">
-                        <h3 style="margin-bottom:10px;">Recent Activity</h3>
-                        <div id="quick-list">
-                            ${this.generateTransactionListHTML(state.transactions.slice(0, 5))}
+                <!-- Right Column (In RTL): Balance -->
+                <div class="dash-col-right" style="display:flex; flex-direction:column; gap:20px;">
+                    <div class="glass-card" style="text-align:center; padding: 40px 20px; background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);">
+                        <div>
+                            <h3 style="color:var(--text-muted)">Current Balance</h3>
+                            <h1 style="font-size: 3.5rem; margin: 15px 0;">₪ ${balance.toLocaleString()}</h1>
+                        </div>
+                        <div class="flex-between" style="gap:20px; margin-top:10px;">
+                            <div style="flex:1; background:rgba(16, 185, 129, 0.1); padding:15px; border-radius:12px;">
+                                <div style="color:var(--success); font-size:1.2rem;">💰 Income</div>
+                                <div style="font-weight:700;">₪${income.toLocaleString()}</div>
+                            </div>
+                            <div style="flex:1; background:rgba(239, 68, 68, 0.1); padding:15px; border-radius:12px;">
+                                <div style="color:var(--danger); font-size:1.2rem;">💸 Expense</div>
+                                <div style="font-weight:700;">₪${expense.toLocaleString()}</div>
+                            </div>
                         </div>
                     </div>
+
+                     <!-- Mobile Only Quick Links (Hidden on Desktop via CSS if needed, but useful generally) -->
+                     <!-- keeping them for mobile user, styling handles grid layout so this flows naturally -->
                 </div>
+
+                <!-- Left Column (In RTL): Recent Activity -->
+                <div class="dash-col-left">
+                    <div class="flex-between" style="margin-bottom:15px;">
+                        <h3>Recent Activity</h3>
+                        <button class="btn" style="width:auto; padding:5px 12px; font-size:0.8rem; background:rgba(255,255,255,0.05);" onclick="app.navigate('transactions')">View All</button>
+                    </div>
+                    <div id="quick-list">
+                        ${this.generateTransactionListHTML(state.transactions.slice(0, 8))}
+                    </div>
+                </div>
+
             </div>
         `;
+    }
 
-        setTimeout(() => this.initCharts(), 100);
+    renderBudget(container) {
+        // Income for Calc
+        const income = state.transactions
+            .filter(t => t.type === 'income')
+            .reduce((sum, t) => sum + Number(t.amount), 0);
+
+        container.innerHTML = `
+            <div class="glass-card">
+                 <div class="flex-between">
+                    <h2>🧠 Smart Budget</h2>
+                    <div style="font-size:2rem;">50/30/20</div>
+                 </div>
+                 <p style="opacity:0.7; margin-bottom:20px;">
+                    This rule allocates your income into Needs (50%), Wants (30%), and Savings (20%).
+                 </p>
+                 
+                 <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:15px; text-align:center; margin-bottom:20px;">
+                    <div style="color:var(--text-muted); margin-bottom:5px;">Total Income Detected</div>
+                    <h1 style="color:var(--success);">₪ ${income.toLocaleString()}</h1>
+                 </div>
+
+                 <button class="btn btn-primary" onclick="app.calcBudgetForce()">Calculate Allocation</button>
+                 
+                 <div id="budget-calc-area" style="margin-top:20px;"></div>
+            </div>
+        `;
     }
 
     initCharts() {
