@@ -5,6 +5,7 @@
 
 import { state } from './state.js';
 import { api } from './api.js';
+import { features } from './features.js';
 
 // Predefined Categories
 const CATEGORIES = {
@@ -36,13 +37,17 @@ class App {
     async init() {
         console.log("AJ+ Initializing...");
 
+        // Mobile Layout Init
+        this.setMobileLayout(state.mobileLayout);
+
         // Load Data
         try {
             await Promise.all([
                 api.getTransactions(),
                 api.getBills(),
                 api.getShoppingList(),
-                api.getGoals()
+                api.getGoals(),
+                api.getPremiumData() // Load Subs & Challenges
             ]);
             this.navigate('dashboard');
         } catch (e) {
@@ -84,6 +89,12 @@ class App {
                 break;
             case 'settings':
                 this.renderSettings(main);
+                break;
+            case 'subscriptions':
+                features.renderSubscriptions(main);
+                break;
+            case 'challenges':
+                features.renderChallenges(main);
                 break;
         }
     }
@@ -131,7 +142,11 @@ class App {
             <div class="dashboard-grid">
                 
                 <!-- Right Column (In RTL): Balance -->
-                <div class="dash-col-right" style="display:flex; flex-direction:column; gap:20px;">
+                <div class="dash-col-right" style="display:flex; flex-direction:column; gap:20px; width:100%;">
+                    
+                    <!-- Smart Insights Widget -->
+                    <div id="insights-widget"></div>
+
                     <div class="glass-card" style="text-align:center; padding: 40px 20px; background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);">
                         <div>
                             <h3 style="color:var(--text-muted)">Current Balance</h3>
@@ -149,79 +164,116 @@ class App {
                         </div>
                     </div>
 
-                    <!-- 3D Recent Activity Carousel -->
-                    <!-- 3D Recent Activity Carousel (Desktop Only) -->
-                    ${state.transactions.length > 0 ? `
-                    <div class="desktop-only" style="justify-content:center;">
-                        <div class="wrapper">
-                            <div class="inner" style="--quantity: ${Math.min(state.transactions.length, 8)};">
-                                ${state.transactions.slice(0, 8).map((t, index) => `
-                                    <div class="card-3d" style="--index: ${index}; border-color: ${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
-                                        <div class="card-3d-content">
-                                            <div class="card-3d-icon">${t.type === 'income' ? '💰' : '💸'}</div>
-                                            <div style="font-size:0.9rem; margin-bottom:5px;">${t.category}</div>
-                                            <div class="card-3d-amount" style="color:${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
-                                                ${t.amount}
-                                            </div>
-                                            <div class="card-3d-date">${new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
+                <!-- Spending Chart (Donut) -->
+                <div class="glass-card" style="padding: 20px;">
+                    <h3 style="margin-bottom:15px; text-align:center;">Spending Breakdown</h3>
+                    <div style="position:relative; height:200px; width:100%; display:flex; justify-content:center;">
+                        <canvas id="dashboardChart"></canvas>
                     </div>
+                </div>
 
-                    <!-- Mobile Cards Scroll (Mobile Only) -->
-                     <div class="mobile-only mobile-scroll-view">
-                        ${state.transactions.slice(0, 8).map(t => `
-                            <div class="mobile-card">
-                                <div class="top-section">
-                                    <div class="border"></div>
-                                    <div class="icons">
-                                        <div class="logo">
-                                            ${t.type === 'income' ? '💰' : '💸'}
-                                        </div>
-                                    </div>
+
+                </div>
+
+                <!-- Left Column (In RTL): Recent Activity List (Both Mobile & Desktop) -->
+                <!-- Mobile: Shows as a list below balance -->
+                <div class="dash-col-left">
+                    <!-- Removed Header as requested -->
+                    
+                    <div id="quick-list" class="premium-list">
+                        ${state.transactions.slice(0, 10).map(t => `
+                            <div class="transaction-tile" onclick="app.editTransaction('${t.id}')">
+                                <div class="tile-icon ${t.type}">
+                                    ${t.type === 'income' ? '💰' : '💸'}
                                 </div>
-                                <div class="bottom-section">
-                                    <span class="title">${t.category}</span>
-                                    <div class="row">
-                                        <div class="item">
-                                            <span class="big-text">${new Date(t.date).getDate()}</span>
-                                            <span class="regular-text">${new Date(t.date).toLocaleString('default', { month: 'short' })}</span>
-                                        </div>
-                                        <div class="item">
-                                            <span class="big-text">${Number(t.amount).toLocaleString()}</span>
-                                            <span class="regular-text">NIS</span>
-                                        </div>
-                                        <div class="item">
-                                            <span class="big-text">${t.type === 'income' ? 'In' : 'Out'}</span>
-                                            <span class="regular-text">Type</span>
-                                        </div>
+                                <div class="tile-info">
+                                    <div class="tile-top">
+                                        <span class="tile-category">${t.category}</span>
+                                        <span class="tile-amount ${t.type}">${t.type === 'income' ? '+' : '-'} ${Number(t.amount).toLocaleString()}</span>
+                                    </div>
+                                    <div class="tile-bottom">
+                                        <span class="tile-note">${t.note || 'No details'}</span>
+                                        <span class="tile-date">${new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
                                     </div>
                                 </div>
                             </div>
                         `).join('')}
-                     </div>
-                    ` : ''}
-
-                     <!-- Mobile Only Quick Links (Hidden on Desktop via CSS if needed, but useful generally) -->
-                </div>
-
-                <!-- Left Column (In RTL): Recent Activity -->
-                <div class="dash-col-left">
-                    <div class="flex-between" style="margin-bottom:15px;">
-                        <h3>Recent Activity</h3>
-                        <button class="btn" style="width:auto; padding:5px 12px; font-size:0.8rem; background:rgba(255,255,255,0.05);" onclick="app.navigate('transactions')">View All</button>
-                    </div>
-                    <div id="quick-list">
-                        ${this.generateTransactionListHTML(state.transactions.slice(0, 8))}
+                        ${state.transactions.length === 0 ? '<p style="opacity:0.5; text-align:center;">No recent activity</p>' : ''}
                     </div>
                 </div>
 
             </div>
         `;
+
+        // Initialize Chart
+        setTimeout(() => {
+            // Render Insights
+            if (window.features) features.renderInsightsWidget('insights-widget');
+
+            const ctx = document.getElementById('dashboardChart');
+            if (ctx) {
+                // Aggregate Data
+                const expenses = {};
+                state.transactions
+                    .filter(t => t.type === 'expense')
+                    .forEach(t => {
+                        expenses[t.category] = (expenses[t.category] || 0) + Number(t.amount);
+                    });
+
+                // Sort & Top 5
+                const sorted = Object.entries(expenses)
+                    .sort(([, a], [, b]) => b - a);
+
+                const labels = [];
+                const data = [];
+                let otherSum = 0;
+
+                sorted.forEach(([cat, amt], index) => {
+                    if (index < 5) {
+                        labels.push(cat);
+                        data.push(amt);
+                    } else {
+                        otherSum += amt;
+                    }
+                });
+
+                if (otherSum > 0) {
+                    labels.push('Other');
+                    data.push(otherSum);
+                }
+
+                // Colors
+                const colors = [
+                    '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6b7280'
+                ];
+
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors,
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { color: '#fff' }
+                            }
+                        }
+                    }
+                });
+            }
+        }, 0);
     }
+
+
 
     renderBudget(container) {
         // Income for Calc
@@ -497,6 +549,27 @@ class App {
         container.innerHTML = `
             <div class="glass-card">
                  <h2>⚙️ Settings</h2>
+                 <br>
+                <div class="glass-card">
+                    <h3>Mobile Navigation Style</h3>
+                    <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn ${state.mobileLayout === 'bar' ? 'btn-primary' : ''}" 
+                            onclick="app.setMobileLayout('bar'); app.navigate('settings')">
+                            Bar (Default)
+                        </button>
+                        <button class="btn ${state.mobileLayout === 'side' ? 'btn-primary' : ''}" 
+                            onclick="app.setMobileLayout('side'); app.navigate('settings')">
+                            Side Menu
+                        </button>
+                        <button class="btn ${state.mobileLayout === 'tabs' ? 'btn-primary' : ''}" 
+                            onclick="app.setMobileLayout('tabs'); app.navigate('settings')">
+                            Tabs
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Categories</h3>
                  <p>Connected to: Google Sheets</p>
                  <br>
                  <label style="font-size:0.8rem; opacity:0.7;">API URL</label>
@@ -565,6 +638,51 @@ class App {
             opt.textContent = cat;
             select.appendChild(opt);
         });
+    }
+
+    debugCards() {
+        const totalTx = state.transactions.length;
+        const domCards = document.querySelectorAll('.mobile-card');
+        const scrollContainer = document.querySelector('.mobile-scroll-view');
+
+        let msg = `📊 State Transactions: ${totalTx}\n`;
+        msg += `🃏 DOM Cards Found: ${domCards.length}\n`;
+
+        if (scrollContainer) {
+            const style = window.getComputedStyle(scrollContainer);
+            msg += `👀 Container Display: ${style.display}\n`;
+            msg += `📏 Container Width: ${scrollContainer.offsetWidth}px\n`;
+        } else {
+            msg += `❌ Scroll Container NOT FOUND\n`;
+        }
+
+        domCards.forEach((c, i) => {
+            if (i < 2) msg += `Card ${i} offsetParent: ${c.offsetParent ? 'Visible' : 'Hidden'}\n`;
+        });
+
+        alert(msg);
+    }
+
+    /* --- Fix for "editTransaction is not a function" error --- */
+    editTransaction(id) {
+        const tx = state.transactions.find(t => t.id === id);
+        if (!tx) return;
+
+        // Open modal
+        this.openAddModal();
+        this.setTransType(tx.type);
+
+        // Populate Fields
+        const amountEl = document.getElementById('trans-amount');
+        const noteEl = document.getElementById('trans-note');
+        const catEl = document.getElementById('trans-category');
+
+        if (amountEl) amountEl.value = tx.amount;
+        if (noteEl) noteEl.value = tx.note || '';
+        if (catEl) catEl.value = tx.category;
+
+        // Notify user (Optional, keeps it non-intrusive)
+        console.log("Viewing transaction:", tx);
     }
 
     saveTransaction() {
@@ -750,6 +868,25 @@ class App {
             category: 'Savings',
             note: `Deposit to Goal: ${name}`
         });
+    }
+
+    // --- Mobile Layout Logic ---
+    setMobileLayout(mode) {
+        state.mobileLayout = mode;
+        localStorage.setItem('mobileLayout', mode);
+
+        // Reset Classes
+        document.body.classList.remove('layout-bar', 'layout-side', 'layout-tabs');
+        document.body.classList.add(`layout-${mode}`);
+    }
+
+    toggleSidebar() {
+        const sidebar = document.querySelector('.mobile-sidebar');
+        const overlay = document.querySelector('.mobile-sidebar-overlay');
+        if (sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
     }
 
     showError(msg) {

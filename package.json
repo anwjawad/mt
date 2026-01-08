@@ -1,0 +1,11 @@
+{
+    "name": "aj-finance",
+    "version": "1.0.0",
+    "description": "AJ+ Finance PWA",
+    "scripts": {
+        "start": "npx -y http-server . -p 3000 -c-1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}

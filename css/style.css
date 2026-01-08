@@ -1,0 +1,1432 @@
+/* AJ+ Finance - MUI Professional Dark Theme */
+/* Based on Material UI Dashboard V7 Template */
+
+:root {
+    /* MUI Dark Palette - Professional Blue/Grey */
+    --bg-dark: #090a0b;
+    /* Main background */
+    --sidebar-bg: #0b0d10;
+    /* Slightly lighter for hierarchy */
+    --card-bg: #12161e;
+    /* Card surface */
+
+    /* Borders & Separators */
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.15);
+
+    /* Text */
+    --text-main: #f3f6f9;
+    /* Primary Text */
+    --text-muted: #b2bac2;
+    /* Secondary Text */
+
+    /* Accents (MUI Blue) */
+    --accent: #3399FF;
+    --accent-hover: #1769aa;
+    --accent-light: rgba(51, 153, 255, 0.1);
+
+    /* Status Colors */
+    --success: #66bb6a;
+    --danger: #f44336;
+    --warning: #ffa726;
+
+    /* Fonts */
+    --font-head: 'Inter', 'Almarai', sans-serif;
+    --font-body: 'Inter', 'Almarai', sans-serif;
+
+    /* Shadows */
+    --shadow-card: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline: none;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    direction: rtl;
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.5;
+}
+
+/* Remove Old Blobs */
+.bg-mesh,
+.blob {
+    display: none;
+}
+
+/* --- Enhanced Transaction Tiles (Premium Modern) - MOVED TO TOP --- */
+.premium-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px 5px;
+}
+
+.transaction-tile {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+    padding: 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.transaction-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+}
+
+.transaction-tile:active {
+    transform: scale(0.98);
+}
+
+.tile-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-right: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.tile-icon.income {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--success);
+}
+
+.tile-icon.expense {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: var(--danger);
+}
+
+.tile-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+}
+
+.tile-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tile-category {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #fff;
+    letter-spacing: 0.3px;
+}
+
+.tile-amount {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.tile-amount.income {
+    color: var(--success);
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+.tile-amount.expense {
+    color: var(--danger);
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+.tile-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tile-note {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+}
+
+.tile-date {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+
+/* --- Layout Grid --- */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar (Desktop) */
+.sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    border-left: 1px solid var(--border-color);
+    /* RTL: Border is on Left */
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 10px;
+    position: fixed;
+    right: 0;
+    /* RTL */
+    top: 0;
+    bottom: 0;
+    z-index: 50;
+    display: none;
+    /* Mobile Default */
+}
+
+.sidebar-banner {
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+    /* Remove card look */
+    box-shadow: none;
+    border: none;
+    margin-bottom: -10px;
+    /* Pull nav up slightly */
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    padding-bottom: 100px;
+    max-width: 1400px;
+    /* Centering logic removed for full width, but max-width keeps it readable on huge screens */
+    width: 100%;
+}
+
+/* --- Components --- */
+
+/* --- Components --- */
+
+/* Navigation Buttons */
+.nav-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 10px 16px;
+    width: 100%;
+    text-align: right;
+    border-radius: 8px;
+    /* Slightly squarer */
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-btn .icon {
+    font-size: 1.1rem;
+    min-width: 24px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-main);
+}
+
+.nav-btn.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid rgba(51, 153, 255, 0.3);
+}
+
+.nav-btn.active .icon {
+    color: var(--accent);
+}
+
+/* Professional Card (No Glass) */
+.glass-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    /* Standard MUI radius */
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    /* Very subtle shadow */
+}
+
+.modal-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Buttons */
+.btn {
+    border: 1px solid transparent;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: 0.2s;
+    letter-spacing: 0.01em;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+}
+
+/* --- "Uiverse" Modal Redesign (Dark Adaptation) --- */
+
+.modal-card {
+    background: var(--card-bg);
+    /* Solid Dark */
+    /* Remove Gradient */
+    box-shadow:
+        0px 20px 24px -4px rgba(0, 0, 0, 0.4),
+        0px 8px 10px -6px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-title {
+    font-weight: 800;
+    font-size: 1.5rem;
+    text-align: center;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+}
+
+/* Sliding Tabs */
+.tab-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    position: relative;
+    padding: 4px;
+    background-color: var(--bg-dark);
+    /* Lighter than card */
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.indicator {
+    content: "";
+    width: 50%;
+    height: 38px;
+    background: var(--accent);
+    /* Solid Blue */
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 9;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: none;
+    /* Cleaner */
+}
+
+.tab {
+    width: 50%;
+    height: 38px;
+    position: relative;
+    z-index: 99;
+    background-color: transparent;
+    border: 0;
+    outline: none;
+    flex: none;
+    align-self: stretch;
+    flex-grow: 1;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color 0.3s;
+}
+
+.tab.selected {
+    color: white;
+}
+
+/* Move Indicator based on State Class applied to container */
+/* RTL Logic: Income is Left (End), Expense is Right (Start) */
+.tab-container.income-mode .indicator {
+    left: 4px;
+    /* Left side */
+    background: var(--success);
+    /* Green for Income */
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.tab-container.expense-mode .indicator {
+    left: calc(50% - 4px);
+    /* Right side */
+    background: var(--danger);
+    /* Red for Expense */
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+/* Inputs form */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Inputs */
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+    background: var(--bg-dark);
+    /* Solid BG */
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: border-color 0.2s;
+}
+
+.input-group:focus-within {
+    border-color: var(--accent);
+}
+
+.input-wrapper {
+    position: relative;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 0 15px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.input-wrapper:focus-within {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent);
+}
+
+.custom-input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 15px;
+    outline: none;
+}
+
+.input-label {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.custom-input:focus~.input-label,
+.custom-input:not(:placeholder-shown)~.input-label,
+.custom-input:valid~.input-label {
+    top: 12px;
+    transform: none;
+    font-size: 0.75rem;
+    color: var(--accent);
+}
+
+/* Strict Hidden for Modal */
+.hidden {
+    display: none !important;
+}
+
+/* --- Mobile Nav (Uiverse) --- */
+.mobile-nav-container {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
+    pointer-events: none;
+    /* Let clicks pass through empty space */
+}
+
+/* Adapted from Uiverse.io by eslam-hany */
+.button-container {
+    pointer-events: auto;
+    display: flex;
+    background-color: var(--card-bg);
+    /* Theme adaptation */
+    /* Scrollable Container Adaptation */
+    width: auto;
+    max-width: 90%;
+    overflow-x: auto;
+    justify-content: flex-start;
+    /* Align start for scrolling */
+    gap: 5px;
+    padding: 0 10px;
+
+    /* Hide Scrollbar */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    height: 50px;
+    /* Slight increase for touch targets */
+    align-items: center;
+    border-radius: 12px;
+
+    /* Dynamic Shadow using Accent Color */
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
+        rgba(51, 153, 255, 0.3) 0px 5px 20px;
+    /* var(--accent) approx */
+
+    border: 1px solid var(--border-color);
+}
+
+.button-container::-webkit-scrollbar {
+    display: none;
+}
+
+.button-container:hover {
+    /* Remove width animation as it conflicts with scroll */
+    width: auto;
+    max-width: 95%;
+}
+
+.button {
+    outline: 0 !important;
+    border: 0 !important;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: all ease-in-out 0.3s;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.button:hover {
+    transform: translateY(-3px) scale(1.1);
+    color: var(--accent);
+    background: rgba(255, 255, 255, 0.05);
+    /* Subtle highlight */
+}
+
+.button .icon {
+    font-size: 1.25rem;
+}
+
+/* Active State Styles (Optional enhancement) */
+.button.active {
+    color: var(--accent);
+    background: rgba(51, 153, 255, 0.1);
+}
+
+@media (min-width: 800px) {
+    .mobile-nav-container {
+        display: none;
+    }
+}
+
+color: var(--text-muted);
+padding: 10px;
+transition: 0.2s;
+width: 50px;
+/* Fixed width for alignment */
+}
+
+.mobile-item.active {
+    color: var(--accent);
+    transform: translateY(-5px);
+}
+
+/* Center Add Button Float */
+.mobile-add-wrapper {
+    position: absolute;
+    left: 50%;
+    top: -25px;
+    /* Float above bar */
+    transform: translateX(-50%);
+    z-index: 110;
+}
+
+.mobile-add-btn {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: var(--accent);
+    /* Solid Gradient: Magenta/Purple */
+    border: 4px solid var(--bg-dark);
+    /* Cutout effect */
+    color: white;
+    font-size: 2.2rem;
+    box-shadow: 0 4px 10px rgba(51, 153, 255, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 5px;
+    /* Visual center adjustment */
+    transition: transform 0.2s;
+}
+
+/* --- Shopping Grid --- */
+.shopping-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* Mobile: 2 cols */
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.shopping-item-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.shopping-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent);
+}
+
+@media (min-width: 800px) {
+    .shopping-grid {
+        grid-template-columns: repeat(5, 1fr);
+        /* Desktop: 5 cols */
+    }
+}
+
+/* --- Uiverse "Buy" Button --- */
+.btn-add-uiverse {
+    position: relative;
+    width: 140px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--accent);
+    background-color: var(--accent);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.btn-add-uiverse,
+.btn-add-uiverse .button__icon,
+.btn-add-uiverse .button__text {
+    transition: all 0.3s;
+}
+
+.btn-add-uiverse .button__text {
+    transform: translateX(20px);
+    /* Adjusted for size */
+    color: #fff;
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+}
+
+.btn-add-uiverse .button__icon {
+    position: absolute;
+    transform: translateX(100px);
+    /* Start off-screen/right */
+    height: 100%;
+    width: 40px;
+    background-color: rgba(0, 0, 0, 0.2);
+    /* Darken */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    right: 0;
+    /* Align right side */
+}
+
+.btn-add-uiverse .svg {
+    width: 20px;
+    stroke: #fff;
+    fill: none;
+}
+
+.btn-add-uiverse:hover {
+    background: var(--accent-hover);
+}
+
+.btn-add-uiverse:hover .button__text {
+    color: transparent;
+}
+
+.btn-add-uiverse:hover .button__icon {
+    width: 100%;
+    transform: translateX(0);
+    background-color: transparent;
+}
+
+.btn-add-uiverse:active .button__icon {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* --- Uiverse "Buy" Button --- */
+.btn-buy-uiverse {
+    text-decoration: none;
+    line-height: 1;
+    border-radius: 20px;
+    /* Pill shape */
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    background-color: var(--card-bg);
+    /* Match Theme */
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    width: auto;
+}
+
+.button-decor {
+    position: absolute;
+    inset: 0;
+    background-color: var(--accent);
+    transform: translateX(100%);
+    /* RTL: Hide to right? Or Left? User said "Left". Let's slide from Left */
+    /* In RTL, negative X goes Left. */
+    transform: translateX(100%);
+    transition: transform .3s;
+    z-index: 0;
+}
+
+/* RTL Slide Logic: We want slide from "start" (Right in RTL) to cover? 
+   Let's stick to simple CSS: slide from left to right visually. */
+html[dir="rtl"] .button-decor {
+    transform: translateX(100%);
+    /* Start Hidden Right */
+}
+
+html[dir="rtl"] .btn-buy-uiverse:hover .button-decor {
+    transform: translateX(0);
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+    height: 100%;
+}
+
+.btn-buy-uiverse .button__icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--accent);
+    display: grid;
+    place-items: center;
+    color: white;
+}
+
+.btn-buy-uiverse .button__text {
+    display: inline-block;
+    transition: color .2s;
+    padding: 0 15px;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.btn-buy-uiverse:hover .button__text {
+    color: white;
+}
+
+.mobile-add-btn:active {
+    transform: scale(0.95);
+}
+
+/* --- RESPONSIVE DESKTOP --- */
+@media (min-width: 800px) {
+    .sidebar {
+        display: flex;
+    }
+
+    .mobile-nav {
+        display: none;
+    }
+
+    .main-content {
+        margin-right: 260px;
+        margin-left: 0;
+        padding-bottom: 40px;
+    }
+
+    /* Desktop Dashboard: Left = Activity, Right = Balance */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        /* 50% 50% Split */
+        gap: 30px;
+        align-items: start;
+    }
+
+    /* --- Cosmic Progress Bar (Uiverse) --- */
+    .progress-container {
+        position: relative;
+        width: 100%;
+        /* Responsive */
+        height: 24px;
+        /* Slightly taller */
+        background: radial-gradient(circle, #1b2735, #090a0f);
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        box-sizing: border-box;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 15px;
+    }
+
+    /* --- 3D Activity Carousel (Uiverse) --- */
+    .wrapper {
+        width: 100%;
+        height: 300px;
+        /* Increased height */
+        position: relative;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: visible;
+        /* Fix clipping */
+        margin-top: 40px;
+        /* More space on top */
+        margin-bottom: 20px;
+        background: transparent;
+    }
+
+    .inner {
+        --w: 120px;
+        /* Width of single card */
+        --h: 160px;
+        /* Height of single card */
+        --translateZ: calc((var(--w) + var(--h)) + 20px);
+        --rotateX: -10deg;
+        --perspective: 800px;
+        position: absolute;
+        width: var(--w);
+        height: var(--h);
+        z-index: 2;
+        transform-style: preserve-3d;
+        transform: perspective(var(--perspective));
+        animation: rotating 20s linear infinite;
+        top: 15%;
+        /* Adjust vertical center */
+    }
+
+    @keyframes rotating {
+        from {
+            transform: perspective(var(--perspective)) rotateX(var(--rotateX)) rotateY(0);
+        }
+
+        to {
+            transform: perspective(var(--perspective)) rotateX(var(--rotateX)) rotateY(1turn);
+        }
+    }
+
+    .card-3d {
+        position: absolute;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        inset: 0;
+        transform: rotateY(calc((360deg / var(--quantity)) * var(--index))) translateZ(var(--translateZ));
+        background: rgba(18, 22, 30, 0.95);
+        /* --card-bg */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        backface-visibility: hidden;
+        /* Optional: hide back if needed, but carousel usually shows all */
+    }
+
+    /* Pause on hover for readability */
+    .wrapper:hover .inner {
+        animation-play-state: paused;
+    }
+
+    /* --- Mobile Responsive 3D (Switches to Horizontal Scroll) --- */
+    @media (max-width: 799px) {
+        .wrapper {
+            height: auto;
+            min-height: 200px;
+            margin-top: 10px;
+            overflow: visible;
+            /* Inherit logic */
+            overflow-x: auto;
+            /* Enable Scroll */
+            justify-content: flex-start;
+            /* Align for scrolling */
+            align-items: center;
+            scroll-behavior: smooth;
+            padding: 10px 20px;
+            /* Padding for start/end */
+            scroll-snap-type: x mandatory;
+            /* Snap effect */
+            /* Hide Scrollbar */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .inner {
+            position: relative;
+            width: max-content;
+            /* Allow content to dictate width */
+            height: auto;
+            display: flex;
+            gap: 15px;
+
+            /* Disable 3D */
+            /* Reset positioning */
+            top: 0;
+            left: 0;
+            margin: 0 auto;
+        }
+
+        .card-3d {
+            position: relative;
+            /* Static flow */
+            inset: auto;
+            /* Disable 3D transforms */
+            transform: none !important;
+
+            width: 140px;
+            /* Readable Width */
+            height: 180px;
+
+            flex-shrink: 0;
+            /* Don't shrink */
+            scroll-snap-align: center;
+            /* Snap to center */
+
+            background: var(--card-bg);
+            /* Ensure solid bg */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin: 0;
+        }
+
+        .card-3d-icon {
+            font-size: 2rem;
+            /* Restore size */
+        }
+
+        .card-3d-amount {
+            font-size: 1.1rem;
+            /* Restore size */
+        }
+    }
+
+    .card-3d-content {
+        text-align: center;
+        color: white;
+    }
+
+    .card-3d-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .card-3d-amount {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .card-3d-date {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 5px;
+    }
+
+    .progress-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        /* RTL: In CSS left is left. We need to handle direction. */
+        height: 100%;
+        /* width is set inline */
+        background: linear-gradient(90deg, var(--success), var(--accent));
+        /* Green to Blue */
+        border-radius: 30px;
+        box-shadow:
+            0 0 15px var(--success),
+            0 0 30px var(--accent);
+        transition: width 1s ease-in-out;
+    }
+
+    /* RTL Support for Progress Bar */
+    html[dir="rtl"] .progress-bar {
+        left: auto;
+        right: 0;
+        background: linear-gradient(270deg, var(--success), var(--accent));
+    }
+
+    .progress-bar::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+        opacity: 0.5;
+        animation: ripple 3s infinite;
+    }
+
+    .progress-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.75rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        color: #fff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+        z-index: 2;
+        white-space: nowrap;
+    }
+
+    .particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .particle {
+        position: absolute;
+        width: 3px;
+        height: 3px;
+        background: #fff;
+        border-radius: 50%;
+        opacity: 0.8;
+        animation: float 5s infinite ease-in-out;
+    }
+
+    @keyframes ripple {
+        0% {
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0.7;
+        }
+
+        100% {
+            transform: translate(-50%, -50%) scale(1.5);
+            opacity: 0;
+        }
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(0) translateX(0);
+        }
+
+        50% {
+            transform: translateY(-10px) translateX(5px);
+        }
+
+        100% {
+            transform: translateY(0) translateX(0);
+        }
+    }
+
+    .particle:nth-child(1) {
+        top: 10%;
+        left: 20%;
+        animation-delay: 0s;
+    }
+
+    .particle:nth-child(2) {
+        top: 30%;
+        left: 70%;
+        animation-delay: 1s;
+    }
+
+    .particle:nth-child(3) {
+        top: 50%;
+        left: 50%;
+        animation-delay: 2s;
+    }
+
+    .particle:nth-child(4) {
+        top: 80%;
+        left: 40%;
+        animation-delay: 1.5s;
+    }
+
+    /* --- View Utilities --- */
+    .desktop-only {
+        display: flex;
+    }
+
+    .mobile-only {
+        display: none;
+    }
+
+}
+
+/* --- Mobile Navigation Options --- */
+
+/* Default (Bar) is hidden if another layout is active */
+body.layout-side .mobile-nav-container,
+body.layout-tabs .mobile-nav-container {
+    display: none !important;
+}
+
+/* --- Option 2: Side Menu (Drawer) --- */
+.mobile-header {
+    display: none;
+    /* Visible only in 'side' layout */
+}
+
+.mobile-sidebar-overlay {
+    display: none;
+}
+
+body.layout-side .mobile-header {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(15, 12, 41, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+body.layout-side .mobile-nav-container {
+    display: none;
+}
+
+body.layout-side .mobile-sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+body.layout-side .mobile-sidebar-overlay.open {
+    display: block;
+    opacity: 1;
+}
+
+.mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    /* RTL support needed? User uses RTL. Right? */
+    width: 280px;
+    height: 100%;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-color);
+    z-index: 2001;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+/* RTL Side Menu */
+html[dir="rtl"] .mobile-sidebar {
+    left: auto;
+    right: -280px;
+    border-right: none;
+    border-left: 1px solid var(--border-color);
+}
+
+html[dir="rtl"] .mobile-sidebar.open {
+    transform: translateX(-280px);
+}
+
+/* LTR Support check */
+html[dir="ltr"] .mobile-sidebar.open {
+    transform: translateX(280px);
+}
+
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    border-radius: 12px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent);
+}
+
+/* --- Option 3: Tabs (User Provided) --- */
+.mobile-tabs-container {
+    display: none;
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    justify-content: center;
+    z-index: 1000;
+    padding-bottom: 0px;
+}
+
+body.layout-tabs .mobile-tabs-container {
+    display: flex;
+}
+
+/* Adapted Radio Inputs CSS */
+.radio-inputs {
+    position: relative;
+    display: flex;
+    /* border-top-left-radius: 0.5rem; */
+    /* border-top-right-radius: 0.5rem; */
+    border-radius: 20px 20px 0 0;
+    /* Updated for bottom bar feel */
+    background-color: var(--card-bg);
+    /* Adapted Theme */
+    font-size: 14px;
+    width: 100%;
+    /* Full Width */
+    max-width: 500px;
+    padding: 0.5rem 0.5rem 0 0.5rem;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+    border-top: 1px solid var(--border-color);
+    justify-content: space-between;
+}
+
+.radio-inputs .radio {
+    flex: 1;
+    text-align: center;
+}
+
+.radio-inputs .radio input {
+    display: none;
+}
+
+.radio-inputs .radio .name {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    transition: all 0.15s ease-in-out;
+    position: relative;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    padding: 10px 0;
+    color: var(--text-muted);
+}
+
+/* Hover */
+.radio-inputs .radio input+.name:hover {
+    color: var(--text-main);
+}
+
+/* Selected State Animation */
+.radio-inputs .radio input:checked+.name {
+    background-color: var(--accent);
+    /* #70c489 -> accent */
+    color: white;
+    font-weight: 600;
+    animation: none;
+    /* User animation was complex, simplified for clean UI or use theirs? Let's use theirs adapted */
+}
+
+/* Using User exact logic adapted to theme */
+.radio-inputs .radio input:checked+.name {
+    background-color: var(--bg-dark);
+    /* The "Active" hole */
+    color: var(--accent);
+}
+
+/* The "Cornes" logic provided relies on a specific background color structure. 
+       Since our body is dark, let's invert the logic: 
+       The Bar is Dark (Card BG). The Active Item "lifts" up or becomes the Body BG?
+       
+       Actually, the user's code makes the *active item* turn into the *background color* (#e8e8e8),
+       and the *surrounding bar* is the colored part (#70c489).
+       
+       Let's map:
+       #70c489 (Green Bar) -> var(--card-bg) [Dark Grey]
+       #e8e8e8 (Active Item Background) -> var(--accent) [Blue]
+       
+       Wait, that would make the active item a solid blue block.
+       Let's try to stick to the "Tab" feel. 
+    */
+
+.radio-inputs {
+    background-color: var(--card-bg);
+}
+
+/* Initial State */
+.radio-inputs .radio .name {
+    background-color: transparent;
+}
+
+/* Active State */
+.radio-inputs .radio input:checked+.name {
+    background-color: var(--accent);
+    color: white;
+}
+
+/* Pre/Pos Names (The Curves) */
+.radio-inputs .radio input+.name .pre-name,
+.radio-inputs .radio input+.name .pos-name {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: var(--card-bg);
+    /* Match Bar */
+    bottom: 0;
+    opacity: 0;
+}
+
+.radio-inputs .radio input+.name .pre-name {
+    right: -10px;
+    border-bottom-left-radius: 300px;
+    /* box-shadow: -3px 3px 0px 3px var(--accent); */
+}
+
+.radio-inputs .radio input+.name .pos-name {
+    left: -10px;
+    border-bottom-right-radius: 300px;
+    /* box-shadow: 3px 3px 0px 3px var(--accent); */
+}
+
+.radio-inputs .radio input:checked+.name .pre-name,
+.radio-inputs .radio input:checked+.name .pos-name {
+    opacity: 1;
+    /* Custom Shadow to creates the curve connector */
+    box-shadow: 0px 5px 0px var(--accent);
+    /* Inverted Logic for bottom tabs? */
+    /* The user code was 'top' tabs essentially? No, borders were top-radius. */
+
+    /* Simpler Implementation for reliability in dark mode: */
+    /* Just highlight the tab */
+}
+
+/* --- Red Tab (+) Styling --- */
+.radio-inputs .radio.tab-add input:checked+.name {
+    background-color: var(--danger) !important;
+    color: white !important;
+}
+
+.radio-inputs .radio.tab-add input:checked+.name .pre-name,
+.radio-inputs .radio.tab-add input:checked+.name .pos-name {
+    box-shadow: 0px 5px 0px var(--danger) !important;
+}
+
+/* Ensure tabs scroll if too many */
+.radio-inputs {
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 2px;
+}
+
+.radio-inputs .radio {
+    min-width: 45px;
+    /* Ensure touch target size */
+}
+
+/* Hide scrollbar on tabs */
+.radio-inputs::-webkit-scrollbar {
+    display: none;
+}

@@ -99,5 +99,27 @@ export const api = {
         const res = await this.request('addGoal', { name, target });
         if (res.ok) state.goals.push(res.item);
         return res;
+    },
+
+    // --- Premium Features Sync ---
+    async getPremiumData() {
+        const res = await this.request('getPremiumData');
+        if (res.ok) {
+            state.subscriptions = res.subscriptions || [];
+            if (res.challenges && res.challenges.length > 0) {
+                state.challenges = res.challenges;
+            }
+            state.save(); // Persist locally
+        }
+        return res;
+    },
+
+    async syncPremiumData() {
+        // Sends the full list of subscriptions and challenges to overwrite cloud
+        const res = await this.request('syncPremiumData', {
+            subscriptions: JSON.stringify(state.subscriptions),
+            challenges: JSON.stringify(state.challenges)
+        });
+        return res;
     }
 };
