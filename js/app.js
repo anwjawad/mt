@@ -400,22 +400,25 @@ class App {
                     </button>
                  </div>
 
-                 ${state.shoppingList.map(item => `
-                    <div class="flex-between" style="margin-bottom:12px; padding:12px; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:12px; align-items:center;">
-                        <span style="font-size:1.1rem; font-weight:500;">${item.name}</span>
-                        
-                        <!-- Uiverse Buy Button -->
-                        <button class="btn-buy-uiverse" onclick="app.buyItem('${item.id}', '${item.name}')">
-                            <span class="button-decor"></span>
-                            <div class="button-content">
-                                <div class="button__icon">
-                                    <span style="font-size:1.2rem">🛒</span>
+                 <div class="shopping-grid">
+                     ${state.shoppingList.map(item => `
+                        <div class="shopping-item-card">
+                            <span style="font-size:1.1rem; font-weight:600; word-break: break-word;">${item.name}</span>
+                            
+                            <!-- Uiverse Buy Button -->
+                            <button class="btn-buy-uiverse" style="width:100%; justify-content:center;" onclick="app.buyItem('${item.id}', '${item.name}')">
+                                <span class="button-decor"></span>
+                                <div class="button-content">
+                                    <div class="button__icon">
+                                        <span style="font-size:1.2rem">🛒</span>
+                                    </div>
+                                    <span class="button__text">Buy</span>
                                 </div>
-                                <span class="button__text">Buy</span>
-                            </div>
-                        </button>
-                    </div>
-                 `).join('')}
+                            </button>
+                        </div>
+                     `).join('')}
+                 </div>
+                 
                  ${state.shoppingList.length === 0 ? '<p style="text-align:center; opacity:0.5; padding:20px;">List is empty</p>' : ''}
             </div>
             <br>
