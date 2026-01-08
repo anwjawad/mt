@@ -91,9 +91,14 @@ body {
 .sidebar-banner {
     width: 100%;
     height: auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border-color);
+    border-radius: 0;
+    /* Remove card look */
+    box-shadow: none;
+    border: none;
+    margin-bottom: -10px;
+    /* Pull nav up slightly */
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
 }
 
 /* Main Content */
@@ -726,6 +731,34 @@ html[dir="rtl"] .btn-buy-uiverse:hover .button-decor {
     /* Pause on hover for readability */
     .wrapper:hover .inner {
         animation-play-state: paused;
+    }
+
+    /* --- Mobile Responsive 3D --- */
+    @media (max-width: 799px) {
+        .wrapper {
+            height: 220px;
+            /* Tighter height on mobile */
+            margin-top: 20px;
+            overflow: hidden;
+            /* Clip strictly on mobile to avoid horizontal scrollbar hell */
+        }
+
+        .inner {
+            --w: 90px;
+            /* Smaller Cards */
+            --h: 120px;
+            --translateZ: 180px;
+            /* Fixed tighter radius */
+            --perspective: 600px;
+        }
+
+        .card-3d-icon {
+            font-size: 1.5rem;
+        }
+
+        .card-3d-amount {
+            font-size: 0.9rem;
+        }
     }
 
     .card-3d-content {
