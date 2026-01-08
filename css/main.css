@@ -953,8 +953,164 @@ html[dir="rtl"] .btn-buy-uiverse:hover .button-decor {
         animation-delay: 1.5s;
     }
 
-    .particle:nth-child(5) {
-        top: 90%;
-        left: 60%;
-        animation-delay: 2.5s;
+    /* --- View Utilities --- */
+    .desktop-only {
+        display: flex;
+    }
+
+    .mobile-only {
+        display: none;
+    }
+
+    @media (max-width: 799px) {
+        .desktop-only {
+            display: none !important;
+        }
+
+        .mobile-only {
+            display: flex !important;
+        }
+    }
+
+    /* --- Mobile Horizontal Scroll Container --- */
+    .mobile-scroll-view {
+        width: 100%;
+        overflow-x: auto;
+        padding: 20px 10px;
+        gap: 20px;
+        scroll-snap-type: x mandatory;
+        -ms-overflow-style: none;
+        /* Hide scrollbar */
+        scrollbar-width: none;
+    }
+
+    .mobile-scroll-view::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* --- Uiverse Mobile Card Design --- */
+    .mobile-card {
+        width: 230px;
+        height: auto;
+        min-height: 280px;
+        border-radius: 20px;
+        background: var(--card-bg);
+        /* Adapted from #1b233d */
+        padding: 5px;
+        overflow: hidden;
+        box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 20px 0px;
+        transition: transform 0.3s;
+        flex-shrink: 0;
+        scroll-snap-align: center;
+        border: 1px solid var(--border-color);
+        position: relative;
+    }
+
+    .mobile-card:active {
+        transform: scale(0.98);
+    }
+
+    .mobile-card .top-section {
+        height: 150px;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(45deg, var(--accent) 0%, #50f6ff 100%);
+        /* Adapted colors */
+        position: relative;
+    }
+
+    .mobile-card .top-section .border {
+        border-bottom-right-radius: 10px;
+        height: 30px;
+        width: 130px;
+        background: var(--card-bg);
+        /* Match card bg */
+        position: relative;
+        transform: skew(-40deg);
+        box-shadow: -10px -10px 0 0 var(--card-bg);
+    }
+
+    .mobile-card .top-section .border::before {
+        content: "";
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        top: 0;
+        right: -15px;
+        background: rgba(255, 255, 255, 0);
+        border-top-left-radius: 10px;
+        box-shadow: -5px -5px 0 2px var(--card-bg);
+    }
+
+    .mobile-card .top-section::before {
+        content: "";
+        position: absolute;
+        top: 30px;
+        left: 0;
+        background: rgba(255, 255, 255, 0);
+        height: 15px;
+        width: 15px;
+        border-top-left-radius: 15px;
+        box-shadow: -5px -5px 0 2px var(--card-bg);
+    }
+
+    .mobile-card .top-section .icons {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .mobile-card .top-section .icons .logo {
+        height: 100%;
+        aspect-ratio: 1;
+        padding: 7px 0 7px 15px;
+        font-size: 1.2rem;
+    }
+
+    .mobile-card .bottom-section {
+        margin-top: 15px;
+        padding: 10px 5px;
+    }
+
+    .mobile-card .bottom-section .title {
+        display: block;
+        font-size: 17px;
+        font-weight: bolder;
+        color: white;
+        text-align: center;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    .mobile-card .bottom-section .row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .mobile-card .bottom-section .row .item {
+        flex: 30%;
+        text-align: center;
+        padding: 5px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .mobile-card .bottom-section .row .item .big-text {
+        font-size: 12px;
+        display: block;
+        font-weight: bold;
+        color: white;
+    }
+
+    .mobile-card .bottom-section .row .item .regular-text {
+        font-size: 10px;
+    }
+
+    .mobile-card .bottom-section .row .item:nth-child(2) {
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
     }

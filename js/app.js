@@ -150,23 +150,59 @@ class App {
                     </div>
 
                     <!-- 3D Recent Activity Carousel -->
+                    <!-- 3D Recent Activity Carousel (Desktop Only) -->
                     ${state.transactions.length > 0 ? `
-                    <div class="wrapper">
-                        <div class="inner" style="--quantity: ${Math.min(state.transactions.length, 8)};">
-                            ${state.transactions.slice(0, 8).map((t, index) => `
-                                <div class="card-3d" style="--index: ${index}; border-color: ${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
-                                    <div class="card-3d-content">
-                                        <div class="card-3d-icon">${t.type === 'income' ? '💰' : '💸'}</div>
-                                        <div style="font-size:0.9rem; margin-bottom:5px;">${t.category}</div>
-                                        <div class="card-3d-amount" style="color:${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
-                                            ${t.amount}
+                    <div class="desktop-only" style="justify-content:center;">
+                        <div class="wrapper">
+                            <div class="inner" style="--quantity: ${Math.min(state.transactions.length, 8)};">
+                                ${state.transactions.slice(0, 8).map((t, index) => `
+                                    <div class="card-3d" style="--index: ${index}; border-color: ${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
+                                        <div class="card-3d-content">
+                                            <div class="card-3d-icon">${t.type === 'income' ? '💰' : '💸'}</div>
+                                            <div style="font-size:0.9rem; margin-bottom:5px;">${t.category}</div>
+                                            <div class="card-3d-amount" style="color:${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
+                                                ${t.amount}
+                                            </div>
+                                            <div class="card-3d-date">${new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
                                         </div>
-                                        <div class="card-3d-date">${new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Mobile Cards Scroll (Mobile Only) -->
+                     <div class="mobile-only mobile-scroll-view">
+                        ${state.transactions.slice(0, 8).map(t => `
+                            <div class="mobile-card">
+                                <div class="top-section">
+                                    <div class="border"></div>
+                                    <div class="icons">
+                                        <div class="logo">
+                                            ${t.type === 'income' ? '💰' : '💸'}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bottom-section">
+                                    <span class="title">${t.category}</span>
+                                    <div class="row">
+                                        <div class="item">
+                                            <span class="big-text">${new Date(t.date).getDate()}</span>
+                                            <span class="regular-text">${new Date(t.date).toLocaleString('default', { month: 'short' })}</span>
+                                        </div>
+                                        <div class="item">
+                                            <span class="big-text">${Number(t.amount).toLocaleString()}</span>
+                                            <span class="regular-text">NIS</span>
+                                        </div>
+                                        <div class="item">
+                                            <span class="big-text">${t.type === 'income' ? 'In' : 'Out'}</span>
+                                            <span class="regular-text">Type</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                     </div>
                     ` : ''}
 
                      <!-- Mobile Only Quick Links (Hidden on Desktop via CSS if needed, but useful generally) -->
