@@ -660,15 +660,18 @@ html[dir="rtl"] .btn-buy-uiverse:hover .button-decor {
     /* --- 3D Activity Carousel (Uiverse) --- */
     .wrapper {
         width: 100%;
-        height: 250px;
-        /* Fixed height for the 3D zone */
+        height: 300px;
+        /* Increased height */
         position: relative;
         text-align: center;
         display: flex;
         align-items: center;
         justify-content: center;
-        overflow: hidden;
-        margin-top: 20px;
+        overflow: visible;
+        /* Fix clipping */
+        margin-top: 40px;
+        /* More space on top */
+        margin-bottom: 20px;
         background: transparent;
     }
 
