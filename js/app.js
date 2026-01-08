@@ -491,40 +491,7 @@ class App {
         `;
     }
 
-    renderGoals(container) {
-        container.innerHTML = `
-            <div class="glass-card">
-                 <div class="flex-between" style="margin-bottom:15px;">
-                    <h2>🎯 Smart Goals</h2>
-                    <button class="btn btn-primary" style="width:auto; padding: 5px 15px;" onclick="app.addGoal()">New Goal</button>
-                 </div>
-                 ${state.goals.map(g => `
-                    <div style="margin-bottom:25px; background:rgba(255,255,255,0.03); padding:15px; border-radius:12px;">
-                        <div class="flex-between" style="margin-bottom:10px;">
-                            <strong>${g.name}</strong>
-                            <small>${Number(g.saved || 0).toLocaleString()} / ${Number(g.target).toLocaleString()}</small>
-                        </div>
-                        <div style="width:100%; height:10px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; margin-bottom:15px;">
-                            <div style="width:${Math.min(((g.saved || 0) / g.target) * 100, 100)}%; height:100%; background:var(--accent-primary); transition:width 0.5s;"></div>
-                        </div>
-                        <div style="display:flex; gap:10px;">
-                            <button class="btn" style="flex:1; background:rgba(16, 185, 129, 0.1); color:var(--success); font-size:0.9rem;" onclick="app.depositGoal('${g.id}', '${g.name}')">
-                                + Deposit 💰
-                            </button>
-                        </div>
-                    </div>
-                 `).join('')}
-                 ${state.goals.length === 0 ? '<p style="text-align:center; opacity:0.5; padding:20px;">No goals yet</p>' : ''}
-            </div>
-             <br>
-            <button class="btn-back-uiverse" onclick="app.navigate('dashboard')">
-                <div class="circle">
-                    <svg class="icon-arrow" viewBox="0 0 1024 1024"><path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"></path><path d="M237.248 512 502.656 777.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"></path></svg>
-                </div>
-                <p class="text">Go Back</p>
-            </button>
-        `;
-    }
+
 
     renderSettings(container) {
         container.innerHTML = `
