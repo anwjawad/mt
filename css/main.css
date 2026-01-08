@@ -1,23 +1,41 @@
-/* AJ+ Modern Web App Design System */
+/* AJ+ Finance - MUI Professional Dark Theme */
+/* Based on Material UI Dashboard V7 Template */
 
 :root {
-    --bg-dark: #0f172a;
-    --sidebar-bg: rgba(15, 23, 42, 0.6);
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-    --active-bg: rgba(142, 45, 226, 0.15);
+    /* MUI Dark Palette - Professional Blue/Grey */
+    --bg-dark: #090a0b;
+    /* Main background */
+    --sidebar-bg: #0b0d10;
+    /* Slightly lighter for hierarchy */
+    --card-bg: #12161e;
+    /* Card surface */
 
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
+    /* Borders & Separators */
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.15);
 
-    --accent: #8E2DE2;
-    --accent-grad: linear-gradient(135deg, #8E2DE2, #4A00E0);
-    --success: #10b981;
-    --danger: #ef4444;
+    /* Text */
+    --text-main: #f3f6f9;
+    /* Primary Text */
+    --text-muted: #b2bac2;
+    /* Secondary Text */
 
-    --font-head: 'Outfit', sans-serif;
-    --font-body: 'Almarai', sans-serif;
+    /* Accents (MUI Blue) */
+    --accent: #3399FF;
+    --accent-hover: #1769aa;
+    --accent-light: rgba(51, 153, 255, 0.1);
+
+    /* Status Colors */
+    --success: #66bb6a;
+    --danger: #f44336;
+    --warning: #ffa726;
+
+    /* Fonts */
+    --font-head: 'Inter', 'Almarai', sans-serif;
+    --font-body: 'Inter', 'Almarai', sans-serif;
+
+    /* Shadows */
+    --shadow-card: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -25,7 +43,7 @@
     margin: 0;
     padding: 0;
     outline: none;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
 }
 
 body {
@@ -35,37 +53,13 @@ body {
     direction: rtl;
     min-height: 100vh;
     overflow-x: hidden;
+    line-height: 1.5;
 }
 
-/* --- Background Layer --- */
-.bg-mesh {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-}
-
+/* Remove Old Blobs */
+.bg-mesh,
 .blob {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.3;
-}
-
-.blob-1 {
-    top: -10%;
-    right: -10%;
-    width: 50vw;
-    height: 50vw;
-    background: #4A00E0;
-}
-
-.blob-2 {
-    bottom: -10%;
-    left: -10%;
-    width: 40vw;
-    height: 40vw;
-    background: #8E2DE2;
+    display: none;
 }
 
 /* --- Layout Grid --- */
@@ -78,15 +72,15 @@ body {
 .sidebar {
     width: 260px;
     background: var(--sidebar-bg);
-    border-left: 1px solid var(--glass-border);
-    /* RTL layout */
-    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--border-color);
+    /* RTL: Border is on Left */
     display: flex;
     flex-direction: column;
-    padding: 30px 20px;
-    gap: 30px;
+    padding: 20px;
+    gap: 10px;
     position: fixed;
     right: 0;
+    /* RTL */
     top: 0;
     bottom: 0;
     z-index: 50;
@@ -97,27 +91,29 @@ body {
 /* Main Content */
 .main-content {
     flex: 1;
-    padding: 20px;
+    padding: 30px;
     padding-bottom: 100px;
-    /* Space for mobile nav */
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1400px;
+    /* Centering logic removed for full width, but max-width keeps it readable on huge screens */
     width: 100%;
 }
+
+/* --- Components --- */
 
 /* --- Components --- */
 
 /* Navigation Buttons */
 .nav-btn {
     background: transparent;
-    border: none;
+    border: 1px solid transparent;
     color: var(--text-muted);
-    font-family: var(--font-head);
-    font-size: 1rem;
-    padding: 12px 15px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 10px 16px;
     width: 100%;
     text-align: right;
-    border-radius: 12px;
+    border-radius: 8px;
+    /* Slightly squarer */
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
@@ -126,81 +122,84 @@ body {
 }
 
 .nav-btn .icon {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     min-width: 24px;
     text-align: center;
+    color: var(--text-muted);
 }
 
 .nav-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     color: var(--text-main);
 }
 
 .nav-btn.active {
-    background: var(--active-bg);
-    color: #c4b5fd;
-    font-weight: 600;
-    border-left: 3px solid var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid rgba(51, 153, 255, 0.3);
 }
 
-/* Glass Card */
-/* Glass Card */
+.nav-btn.active .icon {
+    color: var(--accent);
+}
+
+/* Professional Card (No Glass) */
 .glass-card {
-    background: rgba(30, 41, 59, 0.7);
-    /* Darker, more visible */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    /* Stronger shadow */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    /* Standard MUI radius */
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    /* Very subtle shadow */
 }
 
 .modal-card {
-    background: rgba(15, 23, 42, 0.95);
-    /* Almost opaque for readability */
-    border: 1px solid rgba(142, 45, 226, 0.3);
-    box-shadow: 0 0 50px rgba(142, 45, 226, 0.2);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 /* Buttons */
 .btn {
-    border: none;
-    padding: 12px;
-    border-radius: 10px;
+    border: 1px solid transparent;
+    padding: 10px 20px;
+    border-radius: 8px;
     cursor: pointer;
     font-family: inherit;
-    font-weight: 600;
+    font-weight: 500;
+    font-size: 0.9rem;
     width: 100%;
     transition: 0.2s;
+    letter-spacing: 0.01em;
 }
 
 .btn-primary {
-    background: var(--accent-grad);
+    background: var(--accent);
     color: white;
-    box-shadow: 0 4px 15px rgba(142, 45, 226, 0.3);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
 }
 
 .btn-primary:active {
-    transform: scale(0.98);
+    transform: translateY(1px);
 }
 
 /* --- "Uiverse" Modal Redesign (Dark Adaptation) --- */
 
 .modal-card {
-    width: 90%;
-    max-width: 400px;
-    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-    /* Dark Gradient */
+    background: var(--card-bg);
+    /* Solid Dark */
+    /* Remove Gradient */
     box-shadow:
-        0px 100px 80px rgba(0, 0, 0, 0.5),
-        0px 40px 30px rgba(0, 0, 0, 0.4),
-        0px 20px 20px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
-    /* Subtle border */
-    border-radius: 20px;
+        0px 20px 24px -4px rgba(0, 0, 0, 0.4),
+        0px 8px 10px -6px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
     padding: 25px;
     position: relative;
     overflow: hidden;
@@ -222,7 +221,9 @@ body {
     align-items: flex-start;
     position: relative;
     padding: 4px;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: var(--bg-dark);
+    /* Lighter than card */
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     margin-bottom: 25px;
 }
@@ -231,15 +232,16 @@ body {
     content: "";
     width: 50%;
     height: 38px;
-    background: var(--accent-grad);
-    /* Using App Accent */
+    background: var(--accent);
+    /* Solid Blue */
     position: absolute;
     top: 4px;
     left: 4px;
     z-index: 9;
     border-radius: 10px;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(142, 45, 226, 0.4);
+    box-shadow: none;
+    /* Cleaner */
 }
 
 .tab {
@@ -286,6 +288,21 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+/* Inputs */
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+    background: var(--bg-dark);
+    /* Solid BG */
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: border-color 0.2s;
+}
+
+.input-group:focus-within {
+    border-color: var(--accent);
 }
 
 .input-wrapper {
@@ -349,9 +366,10 @@ body {
     left: 20px;
     right: 20px;
     height: 70px;
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(18, 22, 30, 0.9);
+    /* Card Color but Translucent */
     backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--border-color);
     border-radius: 35px;
     /* Pill Shape */
     display: flex;
@@ -360,7 +378,7 @@ body {
     align-items: center;
     z-index: 100;
     padding: 0 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
 }
 
 .mobile-item {
@@ -393,13 +411,13 @@ body {
     width: 65px;
     height: 65px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #FF0080, #7928CA);
+    background: var(--accent);
     /* Solid Gradient: Magenta/Purple */
     border: 4px solid var(--bg-dark);
     /* Cutout effect */
     color: white;
     font-size: 2.2rem;
-    box-shadow: 0 10px 20px rgba(121, 40, 202, 0.5);
+    box-shadow: 0 4px 10px rgba(51, 153, 255, 0.4);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -407,6 +425,147 @@ body {
     padding-bottom: 5px;
     /* Visual center adjustment */
     transition: transform 0.2s;
+}
+
+/* --- Uiverse "Add Item" Button --- */
+.btn-add-uiverse {
+    position: relative;
+    width: 140px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--accent);
+    background-color: var(--accent);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.btn-add-uiverse,
+.btn-add-uiverse .button__icon,
+.btn-add-uiverse .button__text {
+    transition: all 0.3s;
+}
+
+.btn-add-uiverse .button__text {
+    transform: translateX(20px);
+    /* Adjusted for size */
+    color: #fff;
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+}
+
+.btn-add-uiverse .button__icon {
+    position: absolute;
+    transform: translateX(100px);
+    /* Start off-screen/right */
+    height: 100%;
+    width: 40px;
+    background-color: rgba(0, 0, 0, 0.2);
+    /* Darken */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    right: 0;
+    /* Align right side */
+}
+
+.btn-add-uiverse .svg {
+    width: 20px;
+    stroke: #fff;
+    fill: none;
+}
+
+.btn-add-uiverse:hover {
+    background: var(--accent-hover);
+}
+
+.btn-add-uiverse:hover .button__text {
+    color: transparent;
+}
+
+.btn-add-uiverse:hover .button__icon {
+    width: 100%;
+    transform: translateX(0);
+    background-color: transparent;
+}
+
+.btn-add-uiverse:active .button__icon {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* --- Uiverse "Buy" Button --- */
+.btn-buy-uiverse {
+    text-decoration: none;
+    line-height: 1;
+    border-radius: 20px;
+    /* Pill shape */
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    background-color: var(--card-bg);
+    /* Match Theme */
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    width: auto;
+}
+
+.button-decor {
+    position: absolute;
+    inset: 0;
+    background-color: var(--accent);
+    transform: translateX(100%);
+    /* RTL: Hide to right? Or Left? User said "Left". Let's slide from Left */
+    /* In RTL, negative X goes Left. */
+    transform: translateX(100%);
+    transition: transform .3s;
+    z-index: 0;
+}
+
+/* RTL Slide Logic: We want slide from "start" (Right in RTL) to cover? 
+   Let's stick to simple CSS: slide from left to right visually. */
+html[dir="rtl"] .button-decor {
+    transform: translateX(100%);
+    /* Start Hidden Right */
+}
+
+html[dir="rtl"] .btn-buy-uiverse:hover .button-decor {
+    transform: translateX(0);
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+    height: 100%;
+}
+
+.btn-buy-uiverse .button__icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--accent);
+    display: grid;
+    place-items: center;
+    color: white;
+}
+
+.btn-buy-uiverse .button__text {
+    display: inline-block;
+    transition: color .2s;
+    padding: 0 15px;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+.btn-buy-uiverse:hover .button__text {
+    color: white;
 }
 
 .mobile-add-btn:active {

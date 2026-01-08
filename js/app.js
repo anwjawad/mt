@@ -385,20 +385,41 @@ class App {
     renderShopping(container) {
         container.innerHTML = `
             <div class="glass-card">
-                 <div class="flex-between" style="margin-bottom:15px;">
+                 <div class="flex-between" style="margin-bottom:15px; align-items:center;">
                     <h2>🛒 Shopping List</h2>
-                    <button class="btn btn-primary" style="width:auto; padding: 5px 15px;" onclick="app.addItem()">Add Item</button>
+                    
+                    <!-- Uiverse Add Button -->
+                    <button class="btn-add-uiverse" onclick="app.addItem()">
+                        <span class="button__text">Add Item</span>
+                        <span class="button__icon">
+                            <svg class="svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </span>
+                    </button>
                  </div>
+
                  ${state.shoppingList.map(item => `
-                    <div class="flex-between" style="margin-bottom:10px; padding:12px; background:rgba(255,255,255,0.05); border-radius:10px;">
-                        <span style="font-size:1.1rem">${item.name}</span>
-                        <button class="btn btn-primary" style="width:auto; padding: 5px 12px; font-size:0.8rem;" onclick="app.buyItem('${item.id}', '${item.name}')">Buy</button>
+                    <div class="flex-between" style="margin-bottom:12px; padding:12px; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:12px; align-items:center;">
+                        <span style="font-size:1.1rem; font-weight:500;">${item.name}</span>
+                        
+                        <!-- Uiverse Buy Button -->
+                        <button class="btn-buy-uiverse" onclick="app.buyItem('${item.id}', '${item.name}')">
+                            <span class="button-decor"></span>
+                            <div class="button-content">
+                                <div class="button__icon">
+                                    <span style="font-size:1.2rem">🛒</span>
+                                </div>
+                                <span class="button__text">Buy</span>
+                            </div>
+                        </button>
                     </div>
                  `).join('')}
                  ${state.shoppingList.length === 0 ? '<p style="text-align:center; opacity:0.5; padding:20px;">List is empty</p>' : ''}
             </div>
             <br>
-            <button class="btn" style="background:rgba(255,255,255,0.1)" onclick="app.navigate('dashboard')">Back to Dashboard</button>
+            <button class="btn" style="background:rgba(255,255,255,0.05); color:var(--text-muted);" onclick="app.navigate('dashboard')">Back to Dashboard</button>
         `;
     }
 
