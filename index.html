@@ -79,14 +79,26 @@
     </div>
 
     <!-- Mobile Bottom Navigation (Visible only on mobile) -->
-    <nav class="mobile-nav">
-        <button class="mobile-item active" onclick="app.navigate('dashboard')">📊</button>
-        <button class="mobile-item" onclick="app.navigate('analytics')">�</button>
-        <div style="position: relative; width: 50px;">
-            <button class="mobile-add-btn" onclick="app.openAddModal()">+</button>
+    <nav class="mobile-nav-container">
+        <div class="button-container">
+            <button class="button" onclick="app.navigate('settings')">
+                <span class="icon">⚙️</span>
+            </button>
+            <button class="button" onclick="app.navigate('shopping')">
+                <span class="icon">�</span>
+            </button>
+            <button class="mobile-item" onclick="app.navigate('analytics')">�</button>
+            <button class="button" style="background:var(--accent); box-shadow:0 0 10px var(--accent);"
+                onclick="app.openAddModal()">
+                <span class="icon" style="font-weight:bold; font-size:1.5rem;">+</span>
+            </button>
+            <button class="button" onclick="app.navigate('analytics')">
+                <span class="icon">�</span>
+            </button>
+            <button class="button" onclick="app.navigate('dashboard')">
+                <span class="icon">📊</span>
+            </button>
         </div>
-        <button class="mobile-item" onclick="app.navigate('shopping')">🛒</button>
-        <button class="mobile-item" onclick="app.navigate('settings')">⚙️</button>
     </nav>
 
     <!-- Transaction Modal -->
