@@ -149,8 +149,27 @@ class App {
                         </div>
                     </div>
 
+                    <!-- 3D Recent Activity Carousel -->
+                    ${state.transactions.length > 0 ? `
+                    <div class="wrapper">
+                        <div class="inner" style="--quantity: ${Math.min(state.transactions.length, 8)};">
+                            ${state.transactions.slice(0, 8).map((t, index) => `
+                                <div class="card-3d" style="--index: ${index}; border-color: ${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
+                                    <div class="card-3d-content">
+                                        <div class="card-3d-icon">${t.type === 'income' ? '💰' : '💸'}</div>
+                                        <div style="font-size:0.9rem; margin-bottom:5px;">${t.category}</div>
+                                        <div class="card-3d-amount" style="color:${t.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
+                                            ${t.amount}
+                                        </div>
+                                        <div class="card-3d-date">${new Date(t.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
                      <!-- Mobile Only Quick Links (Hidden on Desktop via CSS if needed, but useful generally) -->
-                     <!-- keeping them for mobile user, styling handles grid layout so this flows naturally -->
                 </div>
 
                 <!-- Left Column (In RTL): Recent Activity -->
@@ -378,7 +397,12 @@ class App {
                  ${state.goals.length === 0 ? '<p style="text-align:center; opacity:0.5; padding:20px;">No goals yet</p>' : ''}
             </div>
              <br>
-            <button class="btn" style="background:rgba(255,255,255,0.1)" onclick="app.navigate('dashboard')">Back to Dashboard</button>
+            <button class="btn-back-uiverse" onclick="app.navigate('dashboard')">
+                <div class="circle">
+                    <svg class="icon-arrow" viewBox="0 0 1024 1024"><path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"></path><path d="M237.248 512 502.656 777.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"></path></svg>
+                </div>
+                <p class="text">Go Back</p>
+            </button>
         `;
     }
 
@@ -421,8 +445,13 @@ class App {
                  
                  ${state.shoppingList.length === 0 ? '<p style="text-align:center; opacity:0.5; padding:20px;">List is empty</p>' : ''}
             </div>
-            <br>
-            <button class="btn" style="background:rgba(255,255,255,0.05); color:var(--text-muted);" onclick="app.navigate('dashboard')">Back to Dashboard</button>
+             <br>
+            <button class="btn-back-uiverse" onclick="app.navigate('dashboard')">
+                <div class="circle">
+                    <svg class="icon-arrow" viewBox="0 0 1024 1024"><path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"></path><path d="M237.248 512 502.656 777.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"></path></svg>
+                </div>
+                <p class="text">Go Back</p>
+            </button>
         `;
     }
 
@@ -452,7 +481,12 @@ class App {
                  ${state.goals.length === 0 ? '<p style="text-align:center; opacity:0.5; padding:20px;">No goals yet</p>' : ''}
             </div>
              <br>
-            <button class="btn" style="background:rgba(255,255,255,0.1)" onclick="app.navigate('dashboard')">Back to Dashboard</button>
+            <button class="btn-back-uiverse" onclick="app.navigate('dashboard')">
+                <div class="circle">
+                    <svg class="icon-arrow" viewBox="0 0 1024 1024"><path d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"></path><path d="M237.248 512 502.656 777.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"></path></svg>
+                </div>
+                <p class="text">Go Back</p>
+            </button>
         `;
     }
 

@@ -88,6 +88,14 @@ body {
     /* Mobile Default */
 }
 
+.sidebar-banner {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+}
+
 /* Main Content */
 .main-content {
     flex: 1;
@@ -647,6 +655,95 @@ html[dir="rtl"] .btn-buy-uiverse:hover .button-decor {
         box-sizing: border-box;
         border: 1px solid rgba(255, 255, 255, 0.1);
         margin-bottom: 15px;
+    }
+
+    /* --- 3D Activity Carousel (Uiverse) --- */
+    .wrapper {
+        width: 100%;
+        height: 250px;
+        /* Fixed height for the 3D zone */
+        position: relative;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-top: 20px;
+        background: transparent;
+    }
+
+    .inner {
+        --w: 120px;
+        /* Width of single card */
+        --h: 160px;
+        /* Height of single card */
+        --translateZ: calc((var(--w) + var(--h)) + 20px);
+        --rotateX: -10deg;
+        --perspective: 800px;
+        position: absolute;
+        width: var(--w);
+        height: var(--h);
+        z-index: 2;
+        transform-style: preserve-3d;
+        transform: perspective(var(--perspective));
+        animation: rotating 20s linear infinite;
+        top: 15%;
+        /* Adjust vertical center */
+    }
+
+    @keyframes rotating {
+        from {
+            transform: perspective(var(--perspective)) rotateX(var(--rotateX)) rotateY(0);
+        }
+
+        to {
+            transform: perspective(var(--perspective)) rotateX(var(--rotateX)) rotateY(1turn);
+        }
+    }
+
+    .card-3d {
+        position: absolute;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        overflow: hidden;
+        inset: 0;
+        transform: rotateY(calc((360deg / var(--quantity)) * var(--index))) translateZ(var(--translateZ));
+        background: rgba(18, 22, 30, 0.95);
+        /* --card-bg */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        backface-visibility: hidden;
+        /* Optional: hide back if needed, but carousel usually shows all */
+    }
+
+    /* Pause on hover for readability */
+    .wrapper:hover .inner {
+        animation-play-state: paused;
+    }
+
+    .card-3d-content {
+        text-align: center;
+        color: white;
+    }
+
+    .card-3d-icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .card-3d-amount {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .card-3d-date {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 5px;
     }
 
     .progress-bar {
