@@ -733,31 +733,83 @@ html[dir="rtl"] .btn-buy-uiverse:hover .button-decor {
         animation-play-state: paused;
     }
 
-    /* --- Mobile Responsive 3D --- */
+    /* --- Mobile Responsive 3D (Switches to Horizontal Scroll) --- */
     @media (max-width: 799px) {
         .wrapper {
-            height: 220px;
-            /* Tighter height on mobile */
-            margin-top: 20px;
-            overflow: hidden;
-            /* Clip strictly on mobile to avoid horizontal scrollbar hell */
+            height: auto;
+            min-height: 200px;
+            margin-top: 10px;
+            overflow: visible;
+            /* Inherit logic */
+            overflow-x: auto;
+            /* Enable Scroll */
+            justify-content: flex-start;
+            /* Align for scrolling */
+            align-items: center;
+            scroll-behavior: smooth;
+            padding: 10px 20px;
+            /* Padding for start/end */
+            scroll-snap-type: x mandatory;
+            /* Snap effect */
+            /* Hide Scrollbar */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .wrapper::-webkit-scrollbar {
+            display: none;
         }
 
         .inner {
-            --w: 90px;
-            /* Smaller Cards */
-            --h: 120px;
-            --translateZ: 180px;
-            /* Fixed tighter radius */
-            --perspective: 600px;
+            position: relative;
+            width: max-content;
+            /* Allow content to dictate width */
+            height: auto;
+            display: flex;
+            gap: 15px;
+
+            /* Disable 3D */
+            animation: none !important;
+            transform: none !important;
+            perspective: none !important;
+            transform-style: flat !important;
+
+            /* Reset positioning */
+            top: 0;
+            left: 0;
+            margin: 0 auto;
+        }
+
+        .card-3d {
+            position: relative;
+            /* Static flow */
+            inset: auto;
+            /* Disable 3D transforms */
+            transform: none !important;
+
+            width: 140px;
+            /* Readable Width */
+            height: 180px;
+
+            flex-shrink: 0;
+            /* Don't shrink */
+            scroll-snap-align: center;
+            /* Snap to center */
+
+            background: var(--card-bg);
+            /* Ensure solid bg */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin: 0;
         }
 
         .card-3d-icon {
-            font-size: 1.5rem;
+            font-size: 2rem;
+            /* Restore size */
         }
 
         .card-3d-amount {
-            font-size: 0.9rem;
+            font-size: 1.1rem;
+            /* Restore size */
         }
     }
 
