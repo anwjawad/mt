@@ -60,6 +60,12 @@ class App {
     navigate(viewId) {
         state.currentView = viewId;
 
+        // Force close sidebar on nav
+        const sidebar = document.querySelector('.mobile-sidebar');
+        const overlay = document.querySelector('.mobile-sidebar-overlay');
+        if (sidebar) sidebar.classList.remove('open');
+        if (overlay) overlay.classList.remove('open');
+
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
         const main = document.getElementById('main-view');
@@ -99,26 +105,129 @@ class App {
         }
     }
 
+    toggleSidebar() {
+        const sidebar = document.querySelector('.mobile-sidebar');
+        const overlay = document.querySelector('.mobile-sidebar-overlay');
+        if (sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+    }
+
+    /* --- Custom Dropdown Logic (MockAPI Style) --- */
+    generateCustomDropdown(id, options, selectedValue) {
+        // Fallback if options empty
+        const selectedObj = options.find(o => o.value === selectedValue) || options[0] || { label: 'Select', value: '' };
+
+        return `
+            <label class="popup" id="${id}" data-value="${selectedObj.value}">
+                <input type="checkbox" id="${id}-checkbox">
+                <div class="burger" tabindex="0">
+                    <span class="text">${selectedObj.label}</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24">
+                        <path d="M7 10l5 5 5-5z"></path>
+                    </svg>
+                </div>
+                <nav class="popup-window">
+                    <legend>Select Option</legend>
+                    <ul>
+                        ${options.map(opt => `
+                            <li>
+                                <button onclick="app.selectCustomOption('${id}', '${opt.value}', '${opt.label}')">
+                                    <span>${opt.label}</span>
+                                </button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </nav>
+            </label>
+        `;
+    }
+
+    selectCustomOption(dropdownId, value, label) {
+        const dropdown = document.getElementById(dropdownId);
+        if (!dropdown) return;
+
+        // Update Text
+        const textSpan = dropdown.querySelector('.burger .text');
+        if (textSpan) textSpan.textContent = label;
+
+        // Update Data Value
+        dropdown.setAttribute('data-value', value);
+
+        // Close Dropdown (Uncheck box)
+        const checkbox = document.getElementById(`${dropdownId}-checkbox`);
+        if (checkbox) checkbox.checked = false;
+
+        // Logic Trigger
+        if (dropdownId === 'chart-type-filter') {
+            this.currentFilterType = value;
+            this.updateCharts();
+        }
+        if (dropdownId === 'chart-cat-filter') {
+            // this.currentFilterCat = value;
+            this.updateCharts();
+        }
+    }
+
+    setupCustomDropdowns() {
+        // Global close on click outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.popup')) {
+                document.querySelectorAll('.popup input[type="checkbox"]').forEach(cb => cb.checked = false);
+            }
+        });
+    }
+
     renderAnalytics(container) {
+        // Collect all unique categories
+        const allCats = new Set([...CATEGORIES.expense, ...CATEGORIES.income]);
+        state.transactions.forEach(t => allCats.add(t.category));
+
+        const catOptions = ['All Categories', ...Array.from(allCats)];
+
+        // Initial values
+        const currentType = this.currentFilterType || 'expense';
+        const currentCat = this.currentFilterCat || 'All Categories'; // Default label
+
+        // Helper to safe-match value/label
+        // If cat is 'all', label 'All Categories'
+        const typeOptions = [
+            { label: 'Expenses 💸', value: 'expense' },
+            { label: 'Income 💰', value: 'income' }
+        ];
+
+        const mappedCatOptions = catOptions.map(c => ({
+            label: c,
+            value: c === 'All Categories' ? 'all' : c
+        }));
+
+        const currentCatVal = currentCat === 'All Categories' ? 'all' : currentCat;
+
         container.innerHTML = `
-            <div class="glass-card">
-                <div class="flex-between" style="margin-bottom:20px;">
+            <div class="glass-card" style="overflow:visible;">
+                <div class="flex-between" style="margin-bottom:20px; flex-wrap:wrap; gap:10px;">
                     <h2>Analytics Overview</h2>
-                    <select id="chart-filter" class="custom-input" style="width:auto; padding:5px 15px; height:auto;" onchange="app.updateCharts()">
-                         <option value="expense">Expenses</option>
-                         <option value="income">Income</option>
-                    </select>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        
+                        <!-- Type Dropdown -->
+                        ${this.generateCustomDropdown('chart-type-filter', typeOptions, currentType)}
+
+                        <!-- Category Dropdown -->
+                        ${this.generateCustomDropdown('chart-cat-filter', mappedCatOptions, currentCatVal)}
+
+                    </div>
                 </div>
                 
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:30px;">
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:30px; position:relative; z-index:1;">
                     <div>
-                        <h4 style="text-align:center; margin-bottom:15px; opacity:0.7;">Category Breakdown</h4>
+                        <h4 style="text-align:center; margin-bottom:15px; opacity:0.7;">Breakdown</h4>
                         <div style="height:300px;">
                             <canvas id="pieChart"></canvas>
                         </div>
                     </div>
                     <div>
-                        <h4 style="text-align:center; margin-bottom:15px; opacity:0.7;">Spending Trend</h4>
+                        <h4 style="text-align:center; margin-bottom:15px; opacity:0.7;">Trend</h4>
                         <div style="height:300px;">
                             <canvas id="lineChart"></canvas>
                         </div>
@@ -126,7 +235,11 @@ class App {
                 </div>
             </div>
         `;
-        setTimeout(() => this.initCharts(), 100);
+
+        setTimeout(() => {
+            this.initCharts();
+            this.setupCustomDropdowns();
+        }, 100);
     }
 
     renderDashboard(container) {
@@ -308,14 +421,36 @@ class App {
         const ctxLine = document.getElementById('lineChart');
         if (!ctxPie || !ctxLine) return;
 
-        const mode = document.getElementById('chart-filter') ? document.getElementById('chart-filter').value : 'expense';
-        const filtered = state.transactions.filter(t => t.type === mode);
+        // Custom Dropdown Logic: Read data-value attribute
+        const typeEl = document.getElementById('chart-type-filter');
+        const catEl = document.getElementById('chart-cat-filter');
 
-        // Pie Data
-        const cats = {};
+        const typeFilter = typeEl ? (typeEl.getAttribute('data-value') || 'expense') : 'expense';
+        const catFilter = catEl ? (catEl.getAttribute('data-value') || 'all') : 'all';
+
+        let filtered = state.transactions.filter(t => t.type === typeFilter);
+
+        // Apply Category Filter if not "all"
+        if (catFilter !== 'all') {
+            filtered = filtered.filter(t => t.category === catFilter);
+        }
+
+        // Pie Data (If category is selected, maybe show Note breakdown? Or just single slice? 
+        // If Category is 'all', show breakdown by Category.
+        // If Category is specific, show breakdown by Time or Note (if available), or just 100% slice.
+        // Let's keep it simple: Breakdown by Note if specific category is selected, or just single color.)
+
+        const keyMap = {};
+
         filtered.forEach(t => {
-            const cat = t.category || 'General';
-            cats[cat] = (cats[cat] || 0) + Number(t.amount);
+            let k = t.category;
+            if (catFilter !== 'all') {
+                // If specific category, group by Note (or 'Unknown') to show variety
+                k = t.note || 'General';
+            } else {
+                k = t.category || 'General';
+            }
+            keyMap[k] = (keyMap[k] || 0) + Number(t.amount);
         });
 
         // Line Data
@@ -332,9 +467,9 @@ class App {
         this.pieChartInstance = new Chart(ctxPie, {
             type: 'doughnut',
             data: {
-                labels: Object.keys(cats),
+                labels: Object.keys(keyMap),
                 datasets: [{
-                    data: Object.values(cats),
+                    data: Object.values(keyMap),
                     backgroundColor: ['#8E2DE2', '#4A00E0', '#00b09b', '#ff5f6d', '#ffc371', '#c3cfe2'],
                     borderWidth: 0
                 }]
@@ -610,7 +745,7 @@ class App {
         this.pendingShoppingId = null;
     }
 
-    setTransType(type) {
+    setTransType(type, initialCategory = null) {
         this.currentTransType = type;
         const container = document.getElementById('type-tabs');
 
@@ -629,15 +764,17 @@ class App {
             container.children[2].classList.add('selected');
         }
 
-        // Populate Categories
-        const select = document.getElementById('trans-category');
-        select.innerHTML = '';
-        CATEGORIES[type].forEach(cat => {
-            const opt = document.createElement('option');
-            opt.value = cat;
-            opt.textContent = cat;
-            select.appendChild(opt);
-        });
+        // Populate Custom Dropdown
+        const options = CATEGORIES[type].map(c => ({ label: c, value: c }));
+        const defaultVal = initialCategory || options[0].value;
+        const dropdownHTML = this.generateCustomDropdown('trans-category-dropdown', options, defaultVal);
+
+        const dropdownContainer = document.getElementById('custom-category-container');
+        if (dropdownContainer) dropdownContainer.innerHTML = dropdownHTML;
+
+        // Ensure it has full width styling if needed
+        const newDropdown = document.getElementById('trans-category-dropdown');
+        if (newDropdown) newDropdown.style.width = '100%';
     }
 
     debugCards() {
@@ -670,16 +807,14 @@ class App {
 
         // Open modal
         this.openAddModal();
-        this.setTransType(tx.type);
+        this.setTransType(tx.type, tx.category);
 
         // Populate Fields
         const amountEl = document.getElementById('trans-amount');
         const noteEl = document.getElementById('trans-note');
-        const catEl = document.getElementById('trans-category');
 
         if (amountEl) amountEl.value = tx.amount;
         if (noteEl) noteEl.value = tx.note || '';
-        if (catEl) catEl.value = tx.category;
 
         // Notify user (Optional, keeps it non-intrusive)
         console.log("Viewing transaction:", tx);
@@ -687,8 +822,11 @@ class App {
 
     saveTransaction() {
         const amount = document.getElementById('trans-amount').value;
-        const category = document.getElementById('trans-category').value;
         const note = document.getElementById('trans-note').value;
+
+        // Custom Dropdown
+        const catEl = document.getElementById('trans-category-dropdown');
+        const category = catEl ? catEl.getAttribute('data-value') : 'General';
 
         if (!amount || Number(amount) <= 0) {
             alert("Please enter a valid amount");

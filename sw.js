@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aj-plus-v15';
+const CACHE_NAME = 'aj-plus-v21';
 const ASSETS = [
     './',
     './index.html',
