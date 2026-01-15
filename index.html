@@ -19,6 +19,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css">
@@ -30,9 +31,11 @@
 
     <div class="app-layout">
         <!-- Header / Navbar (Unified for Desktop & Mobile) -->
+
         <header class="main-header">
-            <button class="menu-btn" onclick="app.toggleSidebar()">☰</button>
-            <div class="logo">AJ+ Finance</div>
+            <div class="logo">
+                <img src="images/logo.svg" alt="AJ+ Finance Logo" class="app-logo">
+            </div>
             <button class="nav-btn" onclick="app.toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
@@ -52,7 +55,7 @@
     <div class="mobile-sidebar-overlay" onclick="app.toggleSidebar()"></div>
     <aside class="mobile-sidebar">
         <div class="sidebar-header">
-            <div>AJ+ Finance</div>
+            <img src="images/logo.svg" alt="AJ+ Finance Logo" class="sidebar-logo">
             <button onclick="app.toggleSidebar()" class="close-btn">&times;</button>
         </div>
 

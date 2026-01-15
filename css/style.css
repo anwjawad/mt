@@ -1431,8 +1431,7 @@ body.layout-tabs .mobile-tabs-container {
     display: none;
 }
 
-/* --- Header & Navigation --- */
-
+/* Header & Navigation */
 .main-header {
     position: fixed;
     top: 0;
@@ -1449,10 +1448,15 @@ body.layout-tabs .mobile-tabs-container {
 }
 
 .logo {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--accent);
-    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    /* Pushes button to right */
+}
+
+.app-logo {
+    height: 35px;
+    width: auto;
 }
 
 .sidebar-header {
@@ -1461,6 +1465,11 @@ body.layout-tabs .mobile-tabs-container {
     align-items: center;
     margin-bottom: 30px;
     padding: 20px;
+}
+
+.sidebar-logo {
+    height: 45px;
+    width: auto;
 }
 }
 
